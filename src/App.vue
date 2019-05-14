@@ -19,17 +19,17 @@
     export default class App extends Vue {
         tabLists = [
             {
-                tabTitle: "场景模拟",
+                tabTitle: "服务调试",
                 curr: true,
+                icon: "./img/tiaoshi.svg",
+                activeIcon: "./img/tiaoshi_active.svg",
+            },
+            {
+                tabTitle: "场景模拟",
+                curr: false,
                 icon: "./img/changjingguanli.svg",
                 activeIcon: "./img/changjingguanli_active.svg",
             },
-            {
-                tabTitle: "服务调试",
-                curr: false,
-                icon: "./img/tiaoshi.svg",
-                activeIcon: "./img/tiaoshi_active.svg",
-            }
         ];
 
         tabSwitch(value: any, index: number) {
@@ -38,7 +38,7 @@
                     this.$router.push("/");
                     break;
                 case 1:
-                    this.$router.push("/about");
+                    this.$router.push("/common");
                     break;
             }
         };
@@ -51,5 +51,10 @@
         width: 100%;
         margin: 0;
         background: rgb(246, 246, 246);
+    }
+
+    h4 {
+        padding: 0 8px;
+        margin: 20px 0 10px;
     }
 </style>
