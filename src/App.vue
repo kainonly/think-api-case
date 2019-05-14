@@ -17,30 +17,39 @@
 
     @Component
     export default class App extends Vue {
-        tabIndex = 0;
-
         tabLists = [
             {
                 tabTitle: "场景模拟",
                 curr: true,
                 icon: "./img/changjingguanli.svg",
                 activeIcon: "./img/changjingguanli_active.svg",
-                href: "###",
             },
             {
                 tabTitle: "服务调试",
                 curr: false,
                 icon: "./img/tiaoshi.svg",
                 activeIcon: "./img/tiaoshi_active.svg",
-                href: "###",
             }
         ];
 
         tabSwitch(value: any, index: number) {
-            this.tabIndex = index;
+            switch (index) {
+                case 0:
+                    this.$router.push("/");
+                    break;
+                case 1:
+                    this.$router.push("/about");
+                    break;
+            }
         };
     }
 </script>
 
 <style lang="scss">
+    body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        background: rgb(246, 246, 246);
+    }
 </style>
