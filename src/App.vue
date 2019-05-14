@@ -1,33 +1,46 @@
 <template>
     <div id="app">
-        <div id="nav">
-            <router-link to="/">Home</router-link>
-            |
-            <router-link to="/about">About</router-link>
-        </div>
+        <nut-navbar :leftShow="false"
+                    :rightShow="false">
+            vue-bit-nutui
+        </nut-navbar>
         <router-view/>
+        <nut-tabbar @tab-switch="tabSwitch"
+                    :tabbarList="tabLists"
+                    :bottom="true">
+        </nut-tabbar>
     </div>
 </template>
 
-<style>
-    #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-    }
+<script lang="ts">
+    import {Vue, Component} from "vue-property-decorator";
 
-    #nav {
-        padding: 30px;
-    }
+    @Component
+    export default class App extends Vue {
+        tabIndex = 0;
 
-    #nav a {
-        font-weight: bold;
-        color: #2c3e50;
-    }
+        tabLists = [
+            {
+                tabTitle: "场景模拟",
+                curr: true,
+                icon: "./img/changjingguanli.svg",
+                activeIcon: "./img/changjingguanli_active.svg",
+                href: "###",
+            },
+            {
+                tabTitle: "服务调试",
+                curr: false,
+                icon: "./img/tiaoshi.svg",
+                activeIcon: "./img/tiaoshi_active.svg",
+                href: "###",
+            }
+        ];
 
-    #nav a.router-link-exact-active {
-        color: #42b983;
+        tabSwitch(value: any, index: number) {
+            this.tabIndex = index;
+        };
     }
+</script>
+
+<style lang="scss">
 </style>
