@@ -26,5 +26,8 @@
       "@types/node",
       "@nuxt/vue-app"
     ]
-  }
+  },
+  "include": [
+    "*.vue"
+  ]
 }
