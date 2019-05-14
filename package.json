@@ -1,29 +1,33 @@
 {
-  "name": "vue-nuxt-nutui",
-  "version": "1.0.0",
-  "description": "My well-made Nuxt.js project",
-  "author": "kain",
+  "name": "vue-nutui",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@nutui/nutui": "^2.1.1",
-    "@nuxtjs/axios": "^5.3.6",
-    "@nuxtjs/pwa": "^2.6.0",
-    "cross-env": "^5.2.0",
-    "nuxt": "^2.4.0",
-    "vue-property-decorator": "^8.1.0"
+    "register-service-worker": "^1.6.2",
+    "vue": "^2.6.10",
+    "vue-class-component": "^7.0.2",
+    "vue-property-decorator": "^8.1.0",
+    "vue-router": "^3.0.3"
   },
   "devDependencies": {
-    "@nuxt/typescript": "^2.6.3",
-    "node-sass": "^4.12.0",
-    "nodemon": "^1.18.9",
-    "sass-loader": "^7.1.0",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.4.5"
-  }
+    "@vue/cli-plugin-pwa": "^3.7.0",
+    "@vue/cli-plugin-typescript": "^3.7.0",
+    "@vue/cli-service": "^3.7.0",
+    "typescript": "^3.4.3",
+    "vue-template-compiler": "^2.5.21"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
 }
