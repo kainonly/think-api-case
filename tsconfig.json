@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-bit-lite": [
+        "dist/ngx-bit-lite"
+      ],
+      "ngx-bit-lite/*": [
+        "dist/ngx-bit-lite/*"
+      ]
+    }
   }
 }

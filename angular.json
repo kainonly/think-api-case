@@ -136,6 +136,41 @@
           }
         }
       }
+    },
+    "ngx-bit-lite": {
+      "root": "projects/ngx-bit-lite",
+      "sourceRoot": "projects/ngx-bit-lite/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ngx-bit-lite/tsconfig.lib.json",
+            "project": "projects/ngx-bit-lite/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-bit-lite/src/test.ts",
+            "tsConfig": "projects/ngx-bit-lite/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-bit-lite/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ngx-bit-lite/tsconfig.lib.json",
+              "projects/ngx-bit-lite/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "ngzorro-mobile-template"
