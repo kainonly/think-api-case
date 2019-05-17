@@ -4,9 +4,6 @@ import router from './router';
 import NutUI from '@nutui/nutui';
 import '@nutui/nutui/dist/nutui.css';
 import './registerServiceWorker';
-import {appid, appsecret} from '../cogs.json';
-
-console.log(appid, appsecret);
 
 Vue.config.productionTip = false;
 NutUI.install(Vue, {});

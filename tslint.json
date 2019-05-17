@@ -5,8 +5,7 @@
   ],
   "linterOptions": {
     "exclude": [
-      "node_modules/**",
-      "cogs.json"
+      "node_modules/**"
     ]
   },
   "rules": {
