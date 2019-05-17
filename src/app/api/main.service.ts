@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {HttpService} from 'ngx-bit-lite';
 
 @Injectable()
 export class MainService {
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpService) {
   }
 
   /**
    * Token验证
    */
   check(): Observable<any> {
-    return this.http.get('/check', {});
+    return this.http.req('/check', {});
   }
 }

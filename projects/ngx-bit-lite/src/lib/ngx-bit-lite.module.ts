@@ -8,10 +8,10 @@ import {HttpService} from './base/http.service';
 @NgModule({
   imports: [HttpClientModule]
 })
-export class NgxBitModule {
-  static forRoot(config: any): ModuleWithProviders<NgxBitModule> {
+export class NgxBitLiteModule {
+  static forRoot(config: any): ModuleWithProviders<NgxBitLiteModule> {
     return {
-      ngModule: NgxBitModule,
+      ngModule: NgxBitLiteModule,
       providers: [
         BitService,
         HttpService,

@@ -8,6 +8,8 @@ import {NgZorroAntdMobileModule} from 'ng-zorro-antd-mobile';
 import {AppComponent} from './app.component';
 import {TokenService} from './guard/token.service';
 import {MainService} from './api/main.service';
+import {NgxBitLiteModule} from 'ngx-bit-lite';
+import {environment} from '../environments/environment';
 
 const routes: Routes = [
   {path: '', loadChildren: './pages/home/home.module#HomeModule'},
@@ -22,6 +24,7 @@ const routes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     NgZorroAntdMobileModule,
+    NgxBitLiteModule.forRoot(environment.bit),
     RouterModule.forRoot(routes, {useHash: true}),
   ],
   providers: [
