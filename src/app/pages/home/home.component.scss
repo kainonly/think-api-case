@@ -1,8 +1,8 @@
 .tab-section {
   position: fixed;
-  height: 100%;
+  height: calc(100% - 45px);
   width: 100%;
-  top: 0
+  top: 45px;
 }
 
 .tab-icon {
@@ -14,7 +14,6 @@
 }
 
 .tab-content {
-  background-color: white;
   height: 100%;
   text-align: center
 }
