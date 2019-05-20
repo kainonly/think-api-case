@@ -1,6 +1,4 @@
-<Navbar [leftContent]="'Back'">
-  NavBar
-</Navbar>
+<Navbar>{{title}}</Navbar>
 
 <TabBar class="tab-section"
         [barTintColor]="'white'"
@@ -24,11 +22,11 @@
       <WhiteSpace></WhiteSpace>
       <WingBlank>
         <WhiteSpace></WhiteSpace>
-        <div Button>JSSDK</div>
+        <div Button [type]="'dashed'">JSSDK</div>
         <WhiteSpace></WhiteSpace>
-        <div Button>微信授权</div>
+        <div Button [type]="'dashed'">微信授权</div>
         <WhiteSpace></WhiteSpace>
-        <div Button>微信支付</div>
+        <div Button [type]="'dashed'">微信支付</div>
       </WingBlank>
       <WhiteSpace></WhiteSpace>
     </div>
