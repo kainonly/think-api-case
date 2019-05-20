@@ -18,7 +18,8 @@ export class HomeComponent {
     imgHeight: '184px'
   };
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+              private _: Toast) {
   }
 
   openTab() {
