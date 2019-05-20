@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {AppExtModule} from '../app.ext.module';
 
-import {HomeComponent} from './home.component';
+import {TabsComponent} from './tabs.component';
 
 @NgModule({
     imports: [
@@ -10,11 +10,11 @@ import {HomeComponent} from './home.component';
         RouterModule.forChild([
             {
                 path: '',
-                component: HomeComponent
+                component: TabsComponent
             }
         ])
     ],
-    declarations: [HomeComponent]
+    declarations: [TabsComponent]
 })
-export class HomeModule {
+export class TabsModule {
 }
