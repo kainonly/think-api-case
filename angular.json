@@ -40,7 +40,9 @@
                 "input": "src/global.scss"
               }
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/hammerjs/hammer.min.js"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {

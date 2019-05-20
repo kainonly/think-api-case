@@ -15,4 +15,8 @@ export class HomeComponent {
         data: ['AiyWuByWklrrUDlFignR', 'TekJlZRVCjLFexlOCuWn', 'IJOtIlfsYdTyaDTRVrLI'],
         imgHeight: '184px'
     };
+
+    openTab() {
+        console.log('asd');
+    }
 }
