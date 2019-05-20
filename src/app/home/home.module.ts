@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {AppExtModule} from '../app.ext.module';
 
-import {HomeComponent} from './home.component';
+import {HomeComponent} from './home.page';
 
 @NgModule({
     imports: [
@@ -16,5 +16,5 @@ import {HomeComponent} from './home.component';
     ],
     declarations: [HomeComponent]
 })
-export class HomeModule {
+export class HomePageModule {
 }
