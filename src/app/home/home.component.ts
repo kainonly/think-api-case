@@ -21,6 +21,6 @@ export class HomeComponent {
   }
 
   openTab() {
-    console.log('asd');
+    this.router.navigateByUrl('/tabs');
   }
 }
