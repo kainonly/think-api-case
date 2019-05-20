@@ -17,6 +17,11 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-bit-lite": [
+        "projects/ngx-bit-lite/src/public-api.ts"
+      ]
+    }
   }
 }
