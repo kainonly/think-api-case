@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
+import {Toast} from 'ng-zorro-antd-mobile';
 
 @Component({
   selector: 'app-home',
@@ -22,5 +23,9 @@ export class HomeComponent {
 
   openTab() {
     this.router.navigateByUrl('/tabs');
+  }
+
+  feedback() {
+    Toast.success('ok');
   }
 }

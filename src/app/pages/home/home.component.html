@@ -27,7 +27,8 @@
   </ListItem>
   <ListItem multipleLine
             [arrow]="'horizontal'"
-            [platform]="'android'">
+            [platform]="'android'"
+            (tap)="feedback()">
     ListItem （Android）
     <Brief>There may have water ripple effect of <br/> material if you set the onClick event.</Brief>
   </ListItem>

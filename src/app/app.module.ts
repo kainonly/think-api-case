@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
-import {NgZorroAntdMobileModule} from 'ng-zorro-antd-mobile';
+import {NgZorroAntdMobileModule, Toast} from 'ng-zorro-antd-mobile';
 import {NgxBitLiteModule} from 'ngx-bit-lite';
 import {environment} from '../environments/environment';
 import {AppRouterModule} from './app.router.module';
@@ -25,11 +25,12 @@ import {MainService} from './api/main.service';
   ],
   providers: [
     TokenService,
-    MainService
+    MainService,
+    Toast
   ],
   bootstrap: [
     AppComponent
-  ]
+  ],
 })
 export class AppModule {
 }
