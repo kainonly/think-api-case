@@ -1,5 +1,5 @@
 {
-  "name": "ngzorro-mobile-template",
+  "name": "ngx-bit-webapp",
   "scripts": {
     "start": "ng serve",
     "build": "ng build --prod --buildOptimizer"

@@ -1,0 +1,38 @@
+<Navbar>组件示例</Navbar>
+
+<NoticeBar [option]="notice"></NoticeBar>
+
+<WhiteSpace></WhiteSpace>
+
+<WingBlank>
+  <Carousel [infinite]="true"
+            [vertical]="false"
+            [selectedIndex]="0">
+    <CarouselSlide *ngFor="let item of state.data">
+      <div style="display: inline-block; width: 100%;" [ngStyle]="{'height': state.imgHeight}">
+        <img src="https://zos.alipayobjects.com/rmsportal/{{item}}.png" style=" pointer-events: none; width: 100%;"/>
+      </div>
+    </CarouselSlide>
+  </Carousel>
+</WingBlank>
+
+<WhiteSpace></WhiteSpace>
+
+<List>
+  <ListItem multipleLine [arrow]="'horizontal'" (tap)="openTab()">
+    打开 Tab 页面
+    <Brief>Open Tab</Brief>
+  </ListItem>
+  <ListItem multipleLine
+            [arrow]="'horizontal'"
+            [platform]="'android'">
+    ListItem （Android）
+    <Brief>There may have water ripple effect of <br/> material if you set the onClick event.</Brief>
+  </ListItem>
+  <ListItem [arrow]="'horizontal'"
+            [thumb]="'https://zos.alipayobjects.com/rmsportal/dNuvNrtqUztHCwM.png'"
+            multipleLine>
+    Title
+    <Brief>subtitle</Brief>
+  </ListItem>
+</List>
