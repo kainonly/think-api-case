@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
-import {TabsComponent} from './tabs.component';
+import {TabScenesComponent} from './tab-scenes.component';
 import {RouterModule, Routes} from '@angular/router';
-import {AppExtModule} from '../app.ext.module';
+import {AppExtModule} from '../../app.ext.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: TabsComponent
+    component: TabScenesComponent
   }
 ];
 
@@ -15,7 +15,7 @@ const routes: Routes = [
     AppExtModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [TabsComponent]
+  declarations: [TabScenesComponent]
 })
-export class TabsModule {
+export class TabScenesModule {
 }

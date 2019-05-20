@@ -1,4 +1,9 @@
-<Navbar>{{title}}</Navbar>
+<Navbar [icon]="icon" [mode]="'light'" (onLeftClick)="back()">
+  {{title}}
+  <ng-template #icon>
+    <Icon [type]="'left'"></Icon>
+  </ng-template>
+</Navbar>
 
 <TabBar class="tab-section"
         [barTintColor]="'white'"
@@ -9,43 +14,44 @@
               [selectedIcon]="serviceSelectedIcon">
     <ng-template #serviceIcon>
       <div class="tab-icon"
-           style="background-image: url('../../assets/service.svg')">
+           style="background-image: url('../../../assets/service.svg')">
       </div>
     </ng-template>
     <ng-template #serviceSelectedIcon>
       <div class="tab-icon"
-           style="background-image: url('../../assets/service_active.svg')">
+           style="background-image: url('../../../assets/service_active.svg')">
       </div>
     </ng-template>
 
     <div class="tab-content">
-      <WhiteSpace></WhiteSpace>
-      <WingBlank>
-        <WhiteSpace></WhiteSpace>
-        <div Button [type]="'dashed'">JSSDK</div>
-        <WhiteSpace></WhiteSpace>
-        <div Button [type]="'dashed'">微信授权</div>
-        <WhiteSpace></WhiteSpace>
-        <div Button [type]="'dashed'">微信支付</div>
-      </WingBlank>
-      <WhiteSpace></WhiteSpace>
+      <ng-container>
+        <ng-template [ngTemplateOutlet]="content"></ng-template>
+      </ng-container>
     </div>
+
   </TabBarItem>
   <TabBarItem [title]="'场景模拟'"
               [icon]="scenesIcon"
               [selectedIcon]="scenesSelectedIcon">
     <ng-template #scenesIcon>
       <div class="tab-icon"
-           style="background-image: url('../../assets/scenes.svg')">
+           style="background-image: url('../../../assets/scenes.svg')">
       </div>
     </ng-template>
     <ng-template #scenesSelectedIcon>
       <div class="tab-icon"
-           style="background-image: url('../../assets/scenes_active.svg')">
+           style="background-image: url('../../../assets/scenes_active.svg')">
       </div>
     </ng-template>
 
     <div class="tab-content">
+      <ng-container>
+        <ng-template [ngTemplateOutlet]="content"></ng-template>
+      </ng-container>
     </div>
   </TabBarItem>
 </TabBar>
+
+<ng-template #content>
+  <router-outlet></router-outlet>
+</ng-template>

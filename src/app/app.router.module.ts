@@ -2,8 +2,8 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-  {path: '', loadChildren: './home/home.module#HomeModule'},
-  {path: 'tabs', loadChildren: './tabs/tabs.module#TabsModule'}
+  {path: '', loadChildren: './pages/home/home.module#HomeModule'},
+  {path: 'tabs', loadChildren: './pages/tabs/tabs.module#TabsModule'}
 ];
 
 @NgModule({
