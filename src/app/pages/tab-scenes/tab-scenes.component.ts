@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router} from '@angular/router';
+import {CommonService} from 'ngx-bit-lite';
 
 @Component({
   selector: 'app-tab-scenes',
@@ -7,12 +7,10 @@ import {Router} from '@angular/router';
   styleUrls: ['./tab-scenes.component.scss']
 })
 export class TabScenesComponent {
-  constructor(private router: Router) {
+  constructor(private common: CommonService) {
   }
 
   startOauth() {
-    this.router.navigateByUrl('https://www.baidu.com',{
-
-    });
+    this.common.redirect('https://yelinvan.cc/wechat/oauth');
   }
 }

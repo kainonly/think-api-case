@@ -4,6 +4,7 @@ import {ConfigService} from './base/config.service';
 import {BitService} from './base/bit.service';
 import {EventsService} from './base/events.service';
 import {HttpService} from './base/http.service';
+import {CommonService} from './base/common.service';
 
 @NgModule({
   imports: [HttpClientModule]
@@ -16,6 +17,7 @@ export class NgxBitLiteModule {
         BitService,
         HttpService,
         EventsService,
+        CommonService,
         {provide: ConfigService, useValue: config},
       ],
     };
