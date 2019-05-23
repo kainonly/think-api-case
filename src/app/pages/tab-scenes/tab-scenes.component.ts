@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {CommonService} from 'ngx-bit-lite';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-tab-scenes',
@@ -11,6 +12,6 @@ export class TabScenesComponent {
   }
 
   startOauth() {
-    this.common.redirect('https://yelinvan.cc/wechat/oauth');
+    this.common.redirect(environment.wechatOauthUrl);
   }
 }
