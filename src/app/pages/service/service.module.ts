@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
-import {TabServiceComponent} from './tab-service.component';
+import {ServiceComponent} from './service.component';
 import {RouterModule, Routes} from '@angular/router';
 import {AppExtModule} from '../../app.ext.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: TabServiceComponent
+    component: ServiceComponent
   }
 ];
 
@@ -15,7 +15,7 @@ const routes: Routes = [
     AppExtModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [TabServiceComponent]
+  declarations: [ServiceComponent]
 })
-export class TabServiceModule {
+export class ServiceModule {
 }

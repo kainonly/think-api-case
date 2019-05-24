@@ -1,0 +1,13 @@
+<Navbar [icon]="icon" [mode]="'light'" (onLeftClick)="bit.push(['/'])">
+  服务测试
+  <ng-template #icon>
+    <Icon [type]="'left'"></Icon>
+  </ng-template>
+</Navbar>
+
+<WhiteSpace></WhiteSpace>
+<WingBlank>
+  <WhiteSpace></WhiteSpace>
+  <div Button (tap)="loadSDK()">JSSDK</div>
+</WingBlank>
+<WhiteSpace></WhiteSpace>

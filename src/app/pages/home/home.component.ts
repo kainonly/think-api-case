@@ -22,8 +22,12 @@ export class HomeComponent {
               private _: Toast) {
   }
 
-  openTab() {
-    this.router.navigateByUrl('/tabs');
+  openScenes() {
+    this.router.navigateByUrl('/scenes');
+  }
+
+  openService() {
+    this.router.navigateByUrl('/service');
   }
 
   feedback() {

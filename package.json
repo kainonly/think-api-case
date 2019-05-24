@@ -1,7 +1,7 @@
 {
   "name": "ngx-bit-webapp",
   "scripts": {
-    "start": "ng serve --host 0.0.0.0 --disableHostCheck",
+    "start": "ng serve --host 0.0.0.0 --port 443 --disableHostCheck --ssl --ssl-cert ssh/site.crt --ssl-key ssh/site.key",
     "build": "ng build --prod --buildOptimizer"
   },
   "private": true,

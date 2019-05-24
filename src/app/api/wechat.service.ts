@@ -1,15 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpService} from 'ngx-bit-lite';
-import {map, switchMap} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-
 
 declare global {
   interface Window {
     wx: any;
   }
 }
-
 
 @Injectable()
 export class WechatService {
@@ -44,6 +42,4 @@ export class WechatService {
       })
     );
   }
-
-
 }
