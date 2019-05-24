@@ -10,12 +10,10 @@ import {BitService} from 'ngx-bit-lite';
 export class ServiceComponent {
   constructor(private wechatService: WechatService,
               public bit: BitService) {
-
   }
 
   loadSDK() {
     this.wechatService.ready().subscribe(data => {
-      console.log(data);
     });
   }
 }
