@@ -7,7 +7,7 @@ import * as bitEnv from '../../env.json';
 export const environment = {
   production: false,
   bit: bitEnv.dev,
-  wechatOauthUrl: bitEnv.wechatOauthUrl
+  wechatOauthUrl: bitEnv.wechatOauthUrl,
 };
 
 /*
