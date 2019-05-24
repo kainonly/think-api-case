@@ -12,7 +12,7 @@ export class TabServiceComponent {
   }
 
   loadSDK() {
-    this.wechatService.jssdk().subscribe(data => {
+    this.wechatService.ready().subscribe(data => {
       console.log(data);
     });
   }

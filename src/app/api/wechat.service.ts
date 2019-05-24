@@ -1,5 +1,15 @@
 import {Injectable} from '@angular/core';
 import {HttpService} from 'ngx-bit-lite';
+import {map, switchMap} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+
+
+declare global {
+  interface Window {
+    wx: any;
+  }
+}
+
 
 @Injectable()
 export class WechatService {
@@ -21,7 +31,19 @@ export class WechatService {
   /**
    * 加载 JSSDK
    */
-  jssdk() {
-    return this.http.req('wechat/jssdk');
+  ready() {
+    return this.http.req('wechat/jssdk').pipe(
+      switchMap(res => {
+        return res.error ? of(false) : Observable.create(observer => {
+          window.wx.config(res.data);
+          window.wx.ready(() => {
+            observer.next();
+            observer.complete();
+          });
+        });
+      })
+    );
   }
+
+
 }
