@@ -1,5 +1,5 @@
 <Navbar [icon]="icon" [mode]="'light'" (onLeftClick)="bit.push(['/'])">
-  服务测试
+  服务
   <ng-template #icon>
     <Icon [type]="'left'"></Icon>
   </ng-template>
@@ -8,6 +8,10 @@
 <WhiteSpace></WhiteSpace>
 <WingBlank>
   <WhiteSpace></WhiteSpace>
-  <div Button (tap)="loadSDK()">JSSDK</div>
+  <div Button (tap)="jssdk()">JSSDK 加载</div>
+  <WhiteSpace></WhiteSpace>
+  <div Button (tap)="openLocation()">使用微信内置地图查看位置</div>
+  <WhiteSpace></WhiteSpace>
+  <div Button (tap)="getLocation()">获取地理位置</div>
 </WingBlank>
 <WhiteSpace></WhiteSpace>

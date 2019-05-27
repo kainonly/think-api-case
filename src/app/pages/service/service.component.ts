@@ -12,8 +12,36 @@ export class ServiceComponent {
               public bit: BitService) {
   }
 
-  loadSDK() {
-    this.wechatService.ready().subscribe(data => {
+  jssdk() {
+    this.wechatService.ready().subscribe(wx => {
+      console.log(wx);
+    });
+  }
+
+  openLocation() {
+    this.wechatService.ready().subscribe(wx => {
+      wx.openLocation({
+        latitude: 0,
+        longitude: 0,
+        name: '',
+        address: '',
+        scale: 1,
+        infoUrl: ''
+      });
+    });
+  }
+
+  /**
+   * 获取地理位置
+   */
+  getLocation() {
+    this.wechatService.ready().subscribe(wx => {
+      wx.getLocation({
+        type: 'wgs84',
+        success(res) {
+          console.log(res);
+        }
+      });
     });
   }
 }

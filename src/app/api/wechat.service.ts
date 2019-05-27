@@ -12,6 +12,7 @@ declare global {
 @Injectable()
 export class WechatService {
   private elementScripts: HTMLElement;
+  private isReady = false;
 
   constructor(private http: HttpService) {
   }
@@ -29,13 +30,14 @@ export class WechatService {
   /**
    * 加载 JSSDK
    */
-  ready() {
-    return this.http.req('wechat/jssdk').pipe(
+  ready(): Observable<any> {
+    return this.isReady ? of(window.wx) : this.http.req('wechat/jssdk').pipe(
       switchMap(res => {
         return res.error ? of(false) : Observable.create(observer => {
           window.wx.config(res.data);
           window.wx.ready(() => {
-            observer.next();
+            this.isReady = true;
+            observer.next(window.wx);
             observer.complete();
           });
         });
