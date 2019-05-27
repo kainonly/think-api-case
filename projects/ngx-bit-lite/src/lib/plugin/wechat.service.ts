@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpService} from 'ngx-bit-lite';
 import {switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
+
+import {HttpService} from '../base/http.service';
 
 declare global {
   interface Window {
@@ -18,7 +19,7 @@ export class WechatService {
   }
 
   /**
-   * 懒加载微信JSSDK
+   * Lazy load script
    */
   loadScripts() {
     this.elementScripts = document.createElement('script');
@@ -28,7 +29,7 @@ export class WechatService {
   }
 
   /**
-   * 加载 JSSDK
+   * Ready Status
    */
   ready(): Observable<any> {
     return this.isReady ? of(window.wx) : this.http.req('wechat/jssdk').pipe(

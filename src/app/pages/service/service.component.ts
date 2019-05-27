@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {WechatService} from '../../api/wechat.service';
+import {WechatService} from 'ngx-bit-lite';
 import {BitService} from 'ngx-bit-lite';
 
 @Component({

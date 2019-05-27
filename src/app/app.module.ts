@@ -10,7 +10,6 @@ import {AppRouterModule} from './app.router.module';
 import {AppComponent} from './app.component';
 import {TokenService} from './guard/token.service';
 import {MainService} from './api/main.service';
-import {WechatService} from './api/wechat.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +25,6 @@ import {WechatService} from './api/wechat.service';
   ],
   providers: [
     TokenService,
-    WechatService,
     MainService,
     Toast
   ],
