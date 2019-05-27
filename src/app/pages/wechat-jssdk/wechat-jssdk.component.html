@@ -1,5 +1,5 @@
 <Navbar [icon]="icon" [mode]="'light'" (onLeftClick)="bit.push(['/'])">
-  服务
+  微信 JSSDK
   <ng-template #icon>
     <Icon [type]="'left'"></Icon>
   </ng-template>
@@ -9,10 +9,28 @@
 <WingBlank>
   <WhiteSpace></WhiteSpace>
   <div Button (tap)="jssdk()">加载</div>
+
   <WhiteSpace></WhiteSpace>
   <div Button (tap)="updateAppMessageShareData()">分享到QQ</div>
+
+  <WhiteSpace></WhiteSpace>
+  <div Button (tap)="updateTimelineShareData()">分享到QQ空间</div>
+
+  <WhiteSpace></WhiteSpace>
+  <div Button (tap)="onMenuShareWeibo()">分享到腾讯微博</div>
+
+  <WhiteSpace></WhiteSpace>
+  <div Button (tap)="chooseImage()">选图</div>
+
+  <WhiteSpace></WhiteSpace>
+  <div Button (tap)="previewImage()">预览图片</div>
+
+  <WhiteSpace></WhiteSpace>
+  <div Button (tap)="uploadImage()">上传图片接口</div>
+
   <WhiteSpace></WhiteSpace>
   <div Button (tap)="openLocation()">使用微信内置地图查看位置</div>
+
   <WhiteSpace></WhiteSpace>
   <div Button (tap)="getLocation()">获取地理位置</div>
 </WingBlank>
