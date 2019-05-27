@@ -3,11 +3,11 @@ import {WechatService} from 'ngx-bit-lite';
 import {BitService} from 'ngx-bit-lite';
 
 @Component({
-  selector: 'app-wechat-sdk',
-  templateUrl: './wechat-sdk.component.html',
-  styleUrls: ['./wechat-sdk.component.scss']
+  selector: 'app-wechat-jssdk',
+  templateUrl: './wechat-jssdk.component.html',
+  styleUrls: ['./wechat-jssdk.component.scss']
 })
-export class WechatSdkComponent implements OnInit {
+export class WechatJssdkComponent implements OnInit {
   constructor(private wechatService: WechatService,
               public bit: BitService) {
   }
@@ -22,6 +22,20 @@ export class WechatSdkComponent implements OnInit {
   jssdk() {
     this.wechatService.ready.subscribe(wx => {
       console.log(wx);
+    });
+  }
+
+  updateAppMessageShareData() {
+    this.wechatService.ready.subscribe(wx => {
+      wx.updateAppMessageShareData({
+        title: '测试',
+        desc: 'DESC',
+        link: 'https://',
+        imgUrl: '',
+        success(): void {
+          console.log('ok');
+        }
+      });
     });
   }
 

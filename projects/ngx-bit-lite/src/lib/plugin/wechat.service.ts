@@ -15,7 +15,7 @@ declare global {
 export class WechatService {
   private elementScripts: HTMLElement;
   private complete = false;
-  ready: AsyncSubject<any> = new AsyncSubject();
+  ready: AsyncSubject<WechatInterface> = new AsyncSubject();
   error: AsyncSubject<any> = new AsyncSubject();
 
   constructor(@Inject(PLATFORM_ID) private platformId: any,

@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {WechatSdkComponent} from './wechat-sdk.component';
+import {WechatJssdkComponent} from './wechat-jssdk.component';
 import {AppExtModule} from '../../app.ext.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: WechatSdkComponent
+    component: WechatJssdkComponent
   }
 ];
 
@@ -15,7 +15,7 @@ const routes: Routes = [
     AppExtModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [WechatSdkComponent]
+  declarations: [WechatJssdkComponent]
 })
-export class WechatSdkModule {
+export class WechatJssdkModule {
 }

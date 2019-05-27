@@ -22,8 +22,8 @@ export class HomeComponent {
               private _: Toast) {
   }
 
-  wechatSDK() {
-    this.router.navigateByUrl('/wechat-sdk');
+  wechatJSSDK() {
+    this.router.navigateByUrl('/wechat-jssdk');
   }
 
   openScenes() {

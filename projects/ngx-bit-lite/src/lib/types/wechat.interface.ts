@@ -258,5 +258,20 @@ export interface WechatInterface {
    */
   showAllNonBaseMenuItem(): void;
 
+  /**
+   * 调起微信扫一扫接口
+   */
+  scanQRCode(args: {
+    needResult: number,
+    scanType: string[],
+    success(res: any): void
+  }): void;
 
+  /**
+   * 跳转微信商品页接口
+   */
+  openProductSpecificView(args: {
+    productId: string,
+    viewType: string
+  }): void;
 }
