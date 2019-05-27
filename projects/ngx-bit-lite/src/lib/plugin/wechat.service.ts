@@ -1,4 +1,5 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
 import {retry, switchMap} from 'rxjs/operators';
 import {AsyncSubject, of, throwError} from 'rxjs';
 import {HttpService} from '../base/http.service';
@@ -13,28 +14,38 @@ declare global {
 @Injectable()
 export class WechatService {
   private elementScripts: HTMLElement;
+  private complete = false;
   ready: AsyncSubject<any> = new AsyncSubject();
+  error: AsyncSubject<any> = new AsyncSubject();
 
-  constructor(private http: HttpService) {
+  constructor(@Inject(PLATFORM_ID) private platformId: any,
+              private http: HttpService) {
   }
 
   /**
    * Install Wechat Plugin
    */
   InstallPlugin(url: string) {
-    this.loadScripts();
-    this.http.req(url).pipe(
-      switchMap(res => res.error ?
-        throwError(res.msg) : of(res.data)
-      ),
-      retry(2)
-    ).subscribe(config => {
-      window.wx.config(config);
-      window.wx.ready(() => {
-        this.ready.next(window.wx);
-        this.ready.complete();
+    if (isPlatformBrowser(this.platformId) && !this.complete) {
+      this.loadScripts();
+      this.http.req(url).pipe(
+        switchMap(res => res.error ?
+          throwError(res.msg) : of(res.data)
+        ),
+        retry(2)
+      ).subscribe(config => {
+        window.wx.config(config);
+        window.wx.ready(() => {
+          this.complete = true;
+          this.ready.next(window.wx);
+          this.ready.complete();
+        });
+        window.wx.error((res) => {
+          this.error.next(res);
+          this.error.complete();
+        });
       });
-    });
+    }
   }
 
   /**

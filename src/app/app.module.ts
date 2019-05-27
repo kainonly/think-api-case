@@ -6,7 +6,6 @@ import {NgZorroAntdMobileModule, Toast} from 'ng-zorro-antd-mobile';
 import {NgxBitLiteModule} from 'ngx-bit-lite';
 import {environment} from '../environments/environment';
 import {AppRouterModule} from './app.router.module';
-
 import {AppComponent} from './app.component';
 import {TokenService} from './guard/token.service';
 import {MainService} from './api/main.service';

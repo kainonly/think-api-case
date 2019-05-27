@@ -1,15 +1,22 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {WechatService} from 'ngx-bit-lite';
 import {BitService} from 'ngx-bit-lite';
 
 @Component({
-  selector: 'app-service',
-  templateUrl: './service.component.html',
-  styleUrls: ['./service.component.scss']
+  selector: 'app-wechat-sdk',
+  templateUrl: './wechat-sdk.component.html',
+  styleUrls: ['./wechat-sdk.component.scss']
 })
-export class ServiceComponent {
+export class WechatSdkComponent implements OnInit {
   constructor(private wechatService: WechatService,
               public bit: BitService) {
+  }
+
+  ngOnInit(): void {
+    this.wechatService.InstallPlugin('wechat/jssdk');
+    this.wechatService.error.subscribe(res => {
+      console.log(res);
+    });
   }
 
   jssdk() {

@@ -3,7 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
   {path: '', loadChildren: './pages/home/home.module#HomeModule'},
-  {path: 'service', loadChildren: './pages/service/service.module#ServiceModule'},
+  {path: 'wechat-sdk', loadChildren: './pages/wechat-sdk/wechat-sdk.module#WechatSdkModule'},
   {path: 'scenes', loadChildren: './pages/scenes/scenes.module#ScenesModule'}
 ];
 

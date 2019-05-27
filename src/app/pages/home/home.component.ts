@@ -22,12 +22,12 @@ export class HomeComponent {
               private _: Toast) {
   }
 
-  openScenes() {
-    this.router.navigateByUrl('/scenes');
+  wechatSDK() {
+    this.router.navigateByUrl('/wechat-sdk');
   }
 
-  openService() {
-    this.router.navigateByUrl('/service');
+  openScenes() {
+    this.router.navigateByUrl('/scenes');
   }
 
   feedback() {
