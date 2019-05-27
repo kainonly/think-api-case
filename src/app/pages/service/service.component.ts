@@ -13,13 +13,13 @@ export class ServiceComponent {
   }
 
   jssdk() {
-    this.wechatService.ready().subscribe(wx => {
+    this.wechatService.ready.subscribe(wx => {
       console.log(wx);
     });
   }
 
   openLocation() {
-    this.wechatService.ready().subscribe(wx => {
+    this.wechatService.ready.subscribe(wx => {
       wx.openLocation({
         latitude: 0,
         longitude: 0,
@@ -35,7 +35,7 @@ export class ServiceComponent {
    * 获取地理位置
    */
   getLocation() {
-    this.wechatService.ready().subscribe(wx => {
+    this.wechatService.ready.subscribe(wx => {
       wx.getLocation({
         type: 'wgs84',
         success(res) {

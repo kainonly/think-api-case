@@ -10,6 +10,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.wechatService.loadScripts();
+    this.wechatService.InstallPlugin('wechat/jssdk');
   }
 }
