@@ -65,5 +65,109 @@ export interface WechatInterface {
   /**
    * 拍照或从手机相册中选图接口
    */
-  chooseImage(): void;
+  chooseImage(args: {
+    count: number,
+    sizeType: string[],
+    sourceType: string[],
+    success(res: any): void
+  }): void;
+
+  /**
+   * 预览图片接口
+   */
+  previewImage(args: {
+    current: string,
+    urls: string[]
+  }): void;
+
+  /**
+   * 上传图片接口
+   */
+  uploadImage(args: {
+    localId: string,
+    isShowProgressTips: number,
+    success(res: any): void
+  }): void;
+
+  /**
+   * 下载图片接口
+   */
+  downloadImage(args: {
+    serverId: string,
+    isShowProgressTips: number,
+    success(res: any): void
+  }): void;
+
+  /**
+   * 获取本地图片接口
+   */
+  getLocalImgData(args: {
+    localId: string,
+    success(res: any): void
+  }): void;
+
+  /**
+   * 开始录音接口
+   */
+  startRecord(): void;
+
+  /**
+   * 停止录音接口
+   */
+  stopRecord(args: {
+    success(res: any): void
+  }): void;
+
+  /**
+   * 监听录音自动停止接口
+   */
+  onVoiceRecordEnd(args: {
+    complete(res: any): void
+  }): void;
+
+  /**
+   * 播放语音接口
+   */
+  playVoice(args: {
+    localId: string
+  }): void;
+
+  /**
+   * 暂停播放接口
+   */
+  pauseVoice(args: {
+    localId: string
+  }): void;
+
+  /**
+   * 停止播放接口
+   */
+  stopVoice(args: {
+    localId: string
+  }): void;
+
+  /**
+   * 监听语音播放完毕接口
+   */
+  onVoicePlayEnd(args: {
+    success(res: any): void
+  }): void;
+
+  /**
+   * 上传语音接口
+   */
+  uploadVoice(args: {
+    localId: string,
+    isShowProgressTips: number,
+    success(res: any): void
+  }): void;
+
+  /**
+   * 下载语音接口
+   */
+  downloadVoice(args: {
+    serverId: string,
+    isShowProgressTips: number,
+    success(res: any): void
+  }): void;
 }
