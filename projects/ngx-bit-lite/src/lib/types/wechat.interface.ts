@@ -170,4 +170,93 @@ export interface WechatInterface {
     isShowProgressTips: number,
     success(res: any): void
   }): void;
+
+  /**
+   * 识别音频并返回识别结果接口
+   */
+  translateVoice(args: {
+    localId: string,
+    isShowProgressTips: number,
+    success(res: any): void
+  }): void;
+
+  /**
+   * 获取网络状态接口
+   */
+  getNetworkType(args: {
+    success(res: any): void
+  }): void;
+
+  /**
+   * 使用微信内置地图查看位置接口
+   */
+  openLocation(args: {
+    latitude: number,
+    longitude: number,
+    name: string,
+    address: string,
+    scale: number,
+    infoUrl: string
+  }): void;
+
+  /**
+   * 获取地理位置接口
+   */
+  getLocation(args: {
+    type: string,
+    success(res: any): void
+  }): void;
+
+  /**
+   * 开启查找周边ibeacon设备接口
+   */
+  startSearchBeacons(args: {
+    ticket: string,
+    complete(argv: any): void
+  }): void;
+
+  /**
+   * 关闭查找周边ibeacon设备接口
+   */
+  stopSearchBeacons(args: {
+    complete(res: any): void
+  }): void;
+
+  /**
+   * 监听周边ibeacon设备接口监听周边ibeacon设备接口
+   */
+  onSearchBeacons(args: {
+    complete(argv: any): void
+  }): void;
+
+  /**
+   * 关闭当前网页窗口接口
+   */
+  closeWindow(): void;
+
+  /**
+   * 批量隐藏功能按钮接口
+   */
+  hideMenuItems(args: {
+    menuList: string[]
+  }): void;
+
+  /**
+   * 批量显示功能按钮接口
+   */
+  showMenuItems(args: {
+    menuList: string[]
+  }): void;
+
+  /**
+   * 隐藏所有非基础按钮接口
+   */
+  hideAllNonBaseMenuItem(): void;
+
+  /**
+   * 显示所有功能按钮接口
+   */
+  showAllNonBaseMenuItem(): void;
+
+
 }
