@@ -17,21 +17,7 @@
     "lib": [
       "es2018",
       "dom"
-    ],
-    "paths": {
-      "ngx-stomp": [
-        "dist/ngx-stomp"
-      ],
-      "ngx-stomp/*": [
-        "dist/ngx-stomp/*"
-      ],
-      "ngx-mqtt-lite": [
-        "dist/ngx-mqtt-lite"
-      ],
-      "ngx-mqtt-lite/*": [
-        "dist/ngx-mqtt-lite/*"
-      ]
-    }
+    ]
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
