@@ -1,14 +1,8 @@
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {HttpClientModule} from '@angular/common/http';
-import {NgZorroAntdMobileModule, Toast} from 'ng-zorro-antd-mobile';
-import {NgxBitLiteModule} from 'ngx-bit-lite';
-import {environment} from '../environments/environment';
-import {AppRouterModule} from './app.router.module';
-import {AppComponent} from './app.component';
-import {TokenService} from './guard/token.service';
-import {MainService} from './api/main.service';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [
@@ -16,20 +10,9 @@ import {MainService} from './api/main.service';
   ],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    NgZorroAntdMobileModule,
-    NgxBitLiteModule.forRoot(environment.bit),
-    AppRouterModule,
+    AppRoutingModule
   ],
-  providers: [
-    TokenService,
-    MainService,
-    Toast
-  ],
-  bootstrap: [
-    AppComponent
-  ],
+  providers: [],
+  bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule { }
