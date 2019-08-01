@@ -1,0 +1,27 @@
+{
+  "name": "ngx-mqtt-lite",
+  "version": "8.0.0",
+  "peerDependencies": {
+    "@angular/common": "^8.0.0",
+    "@angular/core": "^8.0.0",
+    "mqtt": "^3.0.0"
+  },
+  "keywords": [
+    "angular",
+    "mqtt",
+    "ngx-mqtt"
+  ],
+  "author": {
+    "name": "kain",
+    "email": "zhangtqx@vip.qq.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/kainonly/ngx-mqtt-lite",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kainonly/ngx-mqtt-lite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kainonly/ngx-mqtt-lite/issues"
+  }
+}
