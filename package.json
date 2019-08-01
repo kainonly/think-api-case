@@ -5,7 +5,9 @@
     "start": "ng serve ",
     "build": "ng build --prod --buildOptimizer",
     "build:mqtt": "ng build ngx-mqtt-lite",
-    "release:mqtt": "cd dist/ngx-mqtt-lite && npm publish"
+    "release:mqtt": "cd dist/ngx-mqtt-lite && npm publish",
+    "build:stomp": "ng build ngx-stomp",
+    "release:stomp": "cd dist/ngx-stomp && npm publish"
   },
   "private": true,
   "dependencies": {
