@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "start": "ng serve ",
-    "build": "ng build --prod --buildOptimizer"
+    "build": "ng build --prod --buildOptimizer",
+    "build:mqtt": "ng build ngx-mqtt-lite",
+    "release:mqtt": "cd dist/ngx-mqtt-lite && npm publish"
   },
   "private": true,
   "dependencies": {
