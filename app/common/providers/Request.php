@@ -9,12 +9,9 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+namespace app\common\providers;
 
-// 容器Provider定义文件
-use app\common\exceptions\ExceptionHandle;
-use app\common\providers\Request;
+class Request extends \think\Request
+{
 
-return [
-    'think\Request' => Request::class,
-    'think\exception\Handle' => ExceptionHandle::class,
-];
+}
