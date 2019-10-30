@@ -30,6 +30,8 @@
     "psr-4": {
       "app\\": "app",
       "think\\bit\\": "library/think-bit/src/",
+      "think\\extra\\": "library/think-extra/src/",
+      "think\\support\\": "library/think-support/src/",
       "think\\redis\\": "library/think-redis/src/",
       "think\\elastic\\": "library/think-elastic/src/",
       "think\\amqp\\": "library/think-amqp/src/",
