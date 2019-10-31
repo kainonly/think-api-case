@@ -45,7 +45,8 @@
       "": "extend/"
     },
     "classmap": [
-      "library/think-extra/testing"
+      "library/think-extra/testing",
+      "library/think-redis/testing"
     ]
   },
   "config": {
