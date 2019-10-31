@@ -24,7 +24,8 @@
     "php-amqplib/php-amqplib": "^2.9",
     "aliyuncs/oss-sdk-php": "^2.3",
     "elasticsearch/elasticsearch": "^7.2",
-    "guzzlehttp/guzzle": "^6.3"
+    "guzzlehttp/guzzle": "^6.3",
+    "phpunit/phpunit": "8"
   },
   "autoload": {
     "psr-4": {
@@ -41,7 +42,10 @@
     },
     "psr-0": {
       "": "extend/"
-    }
+    },
+    "classmap": [
+      "library/think-extra/testing"
+    ]
   },
   "config": {
     "preferred-install": "dist"
