@@ -26,6 +26,7 @@
     "aliyuncs/oss-sdk-php": "^2.3",
     "elasticsearch/elasticsearch": "^7.2",
     "guzzlehttp/guzzle": "^6.3",
+    "kain/tidy-amqp": "^1.0",
     "phpunit/phpunit": "8"
   },
   "autoload": {
