@@ -1,5 +1,6 @@
 <?php
 return [
+    \think\extra\service\ContextService::class,
     \think\extra\service\HashService::class,
     \think\extra\service\UtilsService::class,
     \think\extra\service\CipherService::class,

@@ -1,6 +1,6 @@
 <?php
 return [
-    'default' => [
+    'system' => [
         'issuer' => 'system',
         'audience' => 'everyone',
         'expires' => 3600
