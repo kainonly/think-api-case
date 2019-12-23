@@ -5,5 +5,6 @@ return [
     \think\extra\service\UtilsService::class,
     \think\extra\service\CipherService::class,
     \think\extra\service\TokenService::class,
-    \think\redis\service\RedisService::class
+    \think\redis\service\RedisService::class,
+    \think\amqp\service\AMQPService::class
 ];

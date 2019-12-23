@@ -2,5 +2,5 @@
 /.vscode
 /vendor
 *.log
-.env
-composer.lock
+/.env
+/composer.lock

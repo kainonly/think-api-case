@@ -9,6 +9,7 @@
     "topthink/think-orm": "^2.0",
     "topthink/think-multi-app": "^1.0",
     "ramsey/uuid": "^3.8",
+    "lcobucci/jwt": "^3.3",
     "ircmaxell/random-lib": "^1.2",
     "danielstjules/stringy": "^3.1",
     "doctrine/collections": "^1.6",
@@ -25,7 +26,6 @@
     "symfony/var-dumper": "^4.2",
     "topthink/think-trace": "^1.0",
     "topthink/think-migration": "^3.0",
-    "lcobucci/jwt": "^3.3",
     "phpunit/phpunit": "8"
   },
   "autoload": {
@@ -46,7 +46,8 @@
     },
     "classmap": [
       "library/think-extra/testing",
-      "library/think-redis/testing"
+      "library/think-redis/testing",
+      "library/think-amqp/tests"
     ]
   },
   "config": {

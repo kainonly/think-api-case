@@ -3,15 +3,17 @@
 namespace app\index\controller;
 
 use app\common\BaseController;
-use app\index\job\JobTest;
+use simplify\amqp\AMQPManager;
 use think\App;
-use think\facade\Queue;
+use think\support\facade\AMQP;
 
 class Index extends BaseController
 {
     public function index()
     {
-        Queue::later(1000, JobTest::class, md5((string)'sd'));
+        AMQP::channel(function (AMQPManager $manager) {
+            $manager->exchange('abc')->setDeclare('direct');
+        });
 //        return json([
 //            'version' => app()->version()
 //        ]);
