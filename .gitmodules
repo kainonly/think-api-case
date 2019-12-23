@@ -1,15 +1,9 @@
 [submodule "library/think-bit"]
 	path = library/think-bit
 	url = git@github.com:kainonly/think-bit.git
-[submodule "library/think-logging"]
-	path = library/think-logging
-	url = git@github.com:kainonly/think-logging.git
 [submodule "library/think-aliyun-extra"]
 	path = library/think-aliyun-extra
 	url = git@github.com:kainonly/think-aliyun-extra.git
-[submodule "library/think-mgo"]
-	path = library/think-mgo
-	url = git@github.com:kainonly/think-mgo.git
 [submodule "library/think-amqp"]
 	path = library/think-amqp
 	url = git@github.com:kainonly/think-amqp.git
