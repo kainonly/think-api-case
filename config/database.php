@@ -64,7 +64,6 @@ return [
     // redis 设置
     'redis' => [
         'default' => [
-            'client' => Env::get('redis.client', 'predis'),
             'host' => Env::get('redis.host', '127.0.0.1'),
             'password' => Env::get('redis.password', null),
             'port' => Env::get('redis.port', 6379),
