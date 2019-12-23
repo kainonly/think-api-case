@@ -45,7 +45,7 @@
       "": "extend/"
     },
     "classmap": [
-      "library/think-extra/testing",
+      "library/think-extra/tests",
       "library/think-redis/testing",
       "library/think-amqp/tests"
     ]
