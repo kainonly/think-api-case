@@ -35,16 +35,15 @@
       "think\\extra\\": "library/think-extra/src/",
       "think\\support\\": "library/think-support/src/",
       "think\\redis\\": "library/think-redis/src/",
-      "think\\mgo\\": "library/think-mgo/src/",
       "think\\elastic\\": "library/think-elastic/src/",
       "think\\amqp\\": "library/think-amqp/src/",
-      "think\\logging\\": "library/think-logging/src/",
       "think\\aliyun\\extra\\": "library/think-aliyun-extra/src/"
     },
     "psr-0": {
       "": "extend/"
     },
     "classmap": [
+      "tests",
       "library/think-extra/tests",
       "library/think-redis/tests",
       "library/think-amqp/tests"
