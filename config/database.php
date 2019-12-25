@@ -64,9 +64,13 @@ return [
     // redis 设置
     'redis' => [
         'default' => [
+            // 服务器地址
             'host' => Env::get('redis.host', '127.0.0.1'),
+            // 密码
             'password' => Env::get('redis.password', null),
+            // 端口
             'port' => Env::get('redis.port', 6379),
+            // 数据库号
             'database' => Env::get('redis.db', 0),
         ]
     ]
