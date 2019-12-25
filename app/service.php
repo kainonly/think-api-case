@@ -6,5 +6,6 @@ return [
     \think\extra\service\CipherService::class,
     \think\extra\service\TokenService::class,
     \think\redis\service\RedisService::class,
-    \think\amqp\service\AMQPService::class
+    \think\amqp\service\AMQPService::class,
+    \think\elastic\service\ElasticService::class
 ];

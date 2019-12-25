@@ -46,7 +46,8 @@
       "tests",
       "library/think-extra/tests",
       "library/think-redis/tests",
-      "library/think-amqp/tests"
+      "library/think-amqp/tests",
+      "library/think-elastic/tests"
     ]
   },
   "config": {
