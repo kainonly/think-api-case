@@ -16,14 +16,19 @@ use think\bit\lifecycle\AddAfterHooks;
 use think\bit\lifecycle\DeleteAfterHooks;
 use think\bit\lifecycle\DeleteBeforeHooks;
 use think\bit\lifecycle\EditAfterHooks;
+use think\bit\lifecycle\EditBeforeHooks;
 
-
-class ResourceController extends BaseController implements AddAfterHooks, EditAfterHooks, DeleteBeforeHooks, DeleteAfterHooks
+class ResourceController extends BaseController
+    implements AddAfterHooks, EditBeforeHooks, EditAfterHooks, DeleteBeforeHooks, DeleteAfterHooks
 {
     use OriginListsModel, GetModel, AddModel, DeleteModel, EditModel;
 
     protected $model = 'resource';
     protected $origin_lists_orders = ['sort'];
+    /**
+     * @var string
+     */
+    private $key;
 
     /**
      * @param int $id
@@ -36,12 +41,49 @@ class ResourceController extends BaseController implements AddAfterHooks, EditAf
     }
 
     /**
+     * @inheritDoc
+     */
+    public function __editBeforeHooks(): bool
+    {
+        try {
+            if (!$this->edit_switch) {
+                $data = Db::name($this->model)
+                    ->where('id', '=', $this->post['id'])
+                    ->find();
+                $this->key = $data['key'];
+            }
+            return true;
+        } catch (Exception $e) {
+            $this->edit_before_result = [
+                'error' => 1,
+                'msg' => $e->getMessage()
+            ];
+            return false;
+        }
+    }
+
+    /**
      * @return bool
      */
     public function __editAfterHooks(): bool
     {
-        $this->clearRedis();
-        return true;
+        try {
+            if (!$this->edit_switch && $this->post['key'] != $this->key) {
+                Db::name($this->model)
+                    ->where('parent', '=', $this->key)
+                    ->update([
+                        'parent' => $this->post['key']
+                    ]);
+            }
+            $this->clearRedis();
+            return true;
+        } catch (Exception $e) {
+            $this->edit_after_result = [
+                'error' => 1,
+                'msg' => $e->getMessage()
+            ];
+            return false;
+        }
     }
 
     /**
