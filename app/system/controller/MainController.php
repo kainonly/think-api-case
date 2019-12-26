@@ -32,16 +32,12 @@ class MainController extends BaseController
      * 登录
      * @return array
      */
-    public function login()
+    public function login(): array
     {
         try {
-            $validate = new MainValidate;
-            if (!$validate->scene('login')->check($this->post)) {
-                return [
-                    'error' => 1,
-                    'msg' => $validate->getError()
-                ];
-            }
+            (new MainValidate)->scene('login')
+                ->check($this->post);
+
 
             $raws = AdminRedis::create()
                 ->get($this->post['username']);
@@ -151,15 +147,10 @@ class MainController extends BaseController
      */
     public function update(): array
     {
-        $validate = new MainValidate;
-        if (!$validate->scene('update')->check($this->post)) {
-            return [
-                'error' => 1,
-                'msg' => $validate->getError()
-            ];
-        }
-
         try {
+            (new MainValidate)->scene('update')
+                ->check($this->post);
+
             $username = Context::get('auth')->user;
             $data = Db::name('admin_basic')
                 ->where('username', '=', $username)
