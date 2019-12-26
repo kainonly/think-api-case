@@ -1,7 +1,10 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\controller;
 
+use app\system\redis\AclRedis;
+use app\system\redis\RoleRedis;
 use think\bit\common\AddModel;
 use think\bit\common\DeleteModel;
 use think\bit\common\EditModel;
@@ -13,7 +16,7 @@ use think\bit\lifecycle\DeleteAfterHooks;
 use think\bit\lifecycle\EditAfterHooks;
 use think\facade\Db;
 
-class Acl extends Base implements AddAfterHooks, EditAfterHooks, DeleteAfterHooks
+class AclController extends BaseController implements AddAfterHooks, EditAfterHooks, DeleteAfterHooks
 {
     use OriginListsModel, ListsModel, AddModel, GetModel, EditModel, DeleteModel;
     protected $model = 'acl';
@@ -22,7 +25,7 @@ class Acl extends Base implements AddAfterHooks, EditAfterHooks, DeleteAfterHook
      * @param $pk
      * @return bool
      */
-    public function __addAfterHooks($pk)
+    public function __addAfterHooks($pk): bool
     {
         $this->clearRedis();
         return true;
@@ -31,7 +34,7 @@ class Acl extends Base implements AddAfterHooks, EditAfterHooks, DeleteAfterHook
     /**
      * @return bool
      */
-    public function __editAfterHooks()
+    public function __editAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
@@ -40,7 +43,7 @@ class Acl extends Base implements AddAfterHooks, EditAfterHooks, DeleteAfterHook
     /**
      * @return bool
      */
-    public function __deleteAfterHooks()
+    public function __deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
@@ -49,17 +52,17 @@ class Acl extends Base implements AddAfterHooks, EditAfterHooks, DeleteAfterHook
     /**
      * 清除缓存
      */
-    private function clearRedis()
+    private function clearRedis(): void
     {
-        (new \app\system\redis\Acl())->clear();
-        (new \app\system\redis\Role())->clear();
+        AclRedis::create()->clear();
+        RoleRedis::create()->clear();
     }
 
     /**
      * 验证访问控制键是否存在
      * @return array
      */
-    public function validedKey()
+    public function validedKey(): array
     {
         if (empty($this->post['key'])) {
             return [

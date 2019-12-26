@@ -1,20 +1,22 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\redis;
 
+use Exception;
 use think\facade\Db;
 use Predis\Pipeline\Pipeline;
 use think\redis\RedisModel;
 
-class Role extends RedisModel
+class RoleRedis extends RedisModel
 {
     protected $key = 'system:role';
-    private $rows = [];
+    private $data = [];
 
     /**
      * 清除缓存
      */
-    public function clear()
+    public function clear(): void
     {
         $this->redis->del([$this->key]);
     }
@@ -23,23 +25,28 @@ class Role extends RedisModel
      * @param string $key 权限组键
      * @param string $type 权限类型
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
-    public function get(string $key, string $type)
+    public function get(string $key, string $type): array
     {
         if (!$this->redis->exists($this->key)) {
             $this->update($key);
         } else {
-            $this->rows = json_decode($this->redis->hget($this->key, $key), true);
+            $raws = $this->redis->hget($this->key, $key);
+            if (!empty($raws)) {
+                $this->data = json_decode($raws, true);
+            } else {
+                return [];
+            }
         }
-        return explode(',', $this->rows[$type]);
+        return explode(',', $this->data[$type]);
     }
 
     /**
      * 刷新权限组缓存
-     * @throws  \Exception
+     * @throws  Exception
      */
-    private function update(string $key)
+    private function update(string $key): void
     {
 
         $lists = Db::name('role')
@@ -58,7 +65,7 @@ class Role extends RedisModel
                     'resource' => $value['resource']
                 ]));
                 if ($key == $value['key']) {
-                    $this->rows = [
+                    $this->data = [
                         'acl' => $value['acl'],
                         'resource' => $value['resource']
                     ];

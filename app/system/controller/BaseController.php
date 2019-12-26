@@ -4,7 +4,7 @@ namespace app\system\controller;
 
 use think\bit\CurdController;
 
-class Base extends CurdController
+class BaseController extends CurdController
 {
     protected $middleware = ['cors', 'json', 'post', 'system.auth', 'system.rbac'];
 

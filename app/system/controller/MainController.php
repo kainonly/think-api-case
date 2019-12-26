@@ -1,7 +1,13 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\controller;
 
+use app\system\redis\AdminRedis;
+use app\system\redis\ResourceRedis;
+use app\system\redis\RoleRedis;
+use app\system\validate\MainValidate;
+use Exception;
 use think\facade\Db;
 use think\facade\Request;
 use think\helper\Arr;
@@ -9,7 +15,7 @@ use think\support\facade\Context;
 use think\support\facade\Hash;
 use think\support\traits\Auth;
 
-class Main extends Base
+class MainController extends BaseController
 {
     use Auth;
 
@@ -29,7 +35,7 @@ class Main extends Base
     public function login()
     {
         try {
-            $validate = new \app\system\validate\Main;
+            $validate = new MainValidate;
             if (!$validate->scene('login')->check($this->post)) {
                 return [
                     'error' => 1,
@@ -37,7 +43,7 @@ class Main extends Base
                 ];
             }
 
-            $raws = \app\system\redis\Admin::create()
+            $raws = AdminRedis::create()
                 ->get($this->post['username']);
 
             if (empty($raws)) {
@@ -59,7 +65,7 @@ class Main extends Base
                 'role' => explode(',', $raws['role'])
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'error' => 1,
                 'msg' => $e->getMessage()
@@ -71,7 +77,7 @@ class Main extends Base
      * 登出
      * @return array
      */
-    public function logout()
+    public function logout(): array
     {
         return $this->__destory('system');
     }
@@ -80,7 +86,7 @@ class Main extends Base
      * Token 验证
      * @return array
      */
-    public function verify()
+    public function verify(): array
     {
         return $this->__verify('system');
     }
@@ -89,13 +95,13 @@ class Main extends Base
      * 获取资源控制数据
      * @return array
      */
-    public function resource()
+    public function resource(): array
     {
         try {
-            $router = (new \app\system\redis\Resource)->get();
+            $router = ResourceRedis::create()->get();
             $role = [];
             foreach (Context::get('auth')->role as $hasRoleKey) {
-                $resource = (new \app\system\redis\Role)->get($hasRoleKey, 'resource');
+                $resource = RoleRedis::create()->get($hasRoleKey, 'resource');
                 array_push($role, ...$resource);
             }
             $routerRole = array_unique($role);
@@ -107,7 +113,7 @@ class Main extends Base
                 'error' => 0,
                 'data' => array_values($lists)
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'error' => 1,
                 'msg' => $e->getMessage()
@@ -119,7 +125,7 @@ class Main extends Base
      * 获取个人信息
      * @return array
      */
-    public function information()
+    public function information(): array
     {
         try {
             $data = Db::name('admin_basic')
@@ -131,7 +137,7 @@ class Main extends Base
                 'error' => 0,
                 'data' => $data
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'error' => 1,
                 'msg' => $e->getMessage()
@@ -143,9 +149,9 @@ class Main extends Base
      * 更新个人信息
      * @return array
      */
-    public function update()
+    public function update(): array
     {
-        $validate = new \app\system\validate\Main;
+        $validate = new MainValidate;
         if (!$validate->scene('update')->check($this->post)) {
             return [
                 'error' => 1,
@@ -175,12 +181,12 @@ class Main extends Base
                 ->where('username', '=', $username)
                 ->update($this->post);
 
-            \app\system\redis\Admin::create()->clear();
+            AdminRedis::create()->clear();
             return [
                 'error' => 0,
                 'msg' => 'ok'
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'error' => 1,
                 'msg' => $e->getMessage()

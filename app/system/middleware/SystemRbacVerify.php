@@ -1,11 +1,15 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\middleware;
 
-use app\system\redis\Acl;
-use app\system\redis\Role;
-use think\helper\Str;
+use Closure;
+use Exception;
 use think\Request;
+use think\Response;
+use think\helper\Str;
+use app\system\redis\AclRedis;
+use app\system\redis\RoleRedis;
 use think\support\facade\Context;
 
 class SystemRbacVerify
@@ -16,13 +20,13 @@ class SystemRbacVerify
 
     /**
      * @param Request $request
-     * @param \Closure $next
-     * @return mixed
-     * @throws \Exception
+     * @param Closure $next
+     * @return Response
+     * @throws Exception
      */
-    public function handle(Request $request, \Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        $controller = Str::lower($request->controller());
+        $controller = Str::snake($request->controller(), '_');
         $action = Str::lower($request->action());
         foreach ($this->except_prefix as $value) {
             if (strpos($action, $value) !== false) {
@@ -32,35 +36,35 @@ class SystemRbacVerify
         $roleKey = Context::get('auth')->role;
         $roleLists = [];
         foreach ($roleKey as $value) {
-            array_push($roleLists, ...(new Role)->get($value, 'acl'));
+            array_push($roleLists, ...RoleRedis::create()->get($value, 'acl'));
         }
         rsort($roleLists);
         $policy = null;
-        foreach ($roleLists as $value) {
-            $role = explode(':', $value);
-            if (Str::lower($role[0]) == $controller) {
-                $policy = $role[1];
+        foreach ($roleLists as $k => $value) {
+            [$roleController, $roleAction] = explode(':', Str::lower($value));
+            if ($roleController == $controller) {
+                $policy = $roleAction;
                 break;
             }
         }
         if (is_null($policy)) {
             return json([
                 'error' => 1,
-                'msg' => 'rbac invalid'
+                'msg' => 'rbac invalid, policy is empty',
             ]);
         }
         $aclLists = array_map(function ($value) {
             return Str::lower($value);
-        }, (new Acl)->get($controller, $policy));
+        }, AclRedis::create()->get($controller, (int)$policy));
         if (empty($aclLists)) {
             return json([
                 'error' => 1,
-                'msg' => 'rbac invalid'
+                'msg' => 'rbac invalid, acl is empty'
             ]);
         }
         return in_array($action, $aclLists) ? $next($request) : json([
             'error' => 1,
-            'msg' => 'rbac invalid'
+            'msg' => 'rbac invalid, access denied'
         ]);
     }
 }

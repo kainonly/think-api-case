@@ -4,7 +4,7 @@ namespace app\system\validate;
 
 use think\Validate;
 
-class Policy extends Validate
+class PolicyValidate extends Validate
 {
     protected $rule = [
         'resource_key' => 'require',

@@ -1,20 +1,22 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\redis;
 
+use Exception;
 use think\facade\Db;
 use Predis\Pipeline\Pipeline;
 use think\redis\RedisModel;
 
-class Admin extends RedisModel
+class AdminRedis extends RedisModel
 {
     protected $key = 'system:admin';
-    private $rows = [];
+    private $data = [];
 
     /**
      * 清除缓存
      */
-    public function clear()
+    public function clear(): void
     {
         $this->redis->del([$this->key]);
     }
@@ -23,24 +25,25 @@ class Admin extends RedisModel
      * 获取用户缓存
      * @param string $username
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
-    public function get(string $username)
+    public function get(string $username): array
     {
         if (!$this->redis->exists($this->key)) {
             $this->update($username);
         } else {
-            $this->rows = json_decode($this->redis->hGet($this->key, $username), true);
+            $raws = $this->redis->hGet($this->key, $username);
+            $this->data = !empty($raws) ? json_decode($raws, true) : [];
         }
-        return $this->rows;
+        return $this->data;
     }
 
     /**
      * 缓存管理员刷新
      * @param string $username
-     * @throws \Exception
+     * @throws Exception
      */
-    private function update(string $username)
+    private function update(string $username): void
     {
 
         $lists = Db::name('admin')
@@ -56,7 +59,7 @@ class Admin extends RedisModel
             foreach ($lists->toArray() as $key => $value) {
                 $pipeline->hset($this->key, $value['username'], json_encode($value));
                 if ($username == $value['username']) {
-                    $this->rows = $value;
+                    $this->data = $value;
                 }
             }
         });

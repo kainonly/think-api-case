@@ -1,20 +1,22 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\redis;
 
+use Exception;
 use think\facade\Db;
 use Predis\Pipeline\Pipeline;
 use think\redis\RedisModel;
 
-class Acl extends RedisModel
+class AclRedis extends RedisModel
 {
     protected $key = 'system:acl';
-    private $rows = [];
+    private $data = [];
 
     /**
      * 清除缓存
      */
-    public function clear()
+    public function clear(): void
     {
         $this->redis->del([$this->key]);
     }
@@ -23,23 +25,23 @@ class Acl extends RedisModel
      * @param string $key 访问控制键
      * @param int $policy 控制策略
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
-    public function get(string $key, int $policy)
+    public function get(string $key, int $policy): array
     {
         if (!$this->redis->exists($this->key)) {
             $this->update($key);
         } else {
-            $this->rows = json_decode($this->redis->hget($this->key, $key), true);
+            $raws = $this->redis->hget($this->key, $key);
+            $this->data = !empty($raws) ? json_decode($raws, true) : [];
         }
-
         switch ($policy) {
             case 0:
-                return explode(',', $this->rows['read']);
+                return explode(',', $this->data['read']);
             case 1:
                 return array_merge(
-                    explode(',', $this->rows['read']),
-                    explode(',', $this->rows['write'])
+                    explode(',', $this->data['read']),
+                    explode(',', $this->data['write'])
                 );
             default:
                 return [];
@@ -49,9 +51,9 @@ class Acl extends RedisModel
     /**
      * 更新缓存
      * @param string $key 访问控制键
-     * @throws \Exception
+     * @throws Exception
      */
-    private function update(string $key)
+    private function update(string $key): void
     {
         $lists = Db::name('acl')
             ->where('status', '=', 1)
@@ -69,7 +71,7 @@ class Acl extends RedisModel
                     'read' => $value['read']
                 ]));
                 if ($key == $value['key']) {
-                    $this->rows = [
+                    $this->data = [
                         'write' => $value['write'],
                         'read' => $value['read']
                     ];

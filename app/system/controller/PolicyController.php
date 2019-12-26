@@ -1,14 +1,16 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\controller;
 
+use app\system\redis\RoleRedis;
 use think\bit\common\AddModel;
 use think\bit\common\DeleteModel;
 use think\bit\common\OriginListsModel;
 use think\bit\lifecycle\AddAfterHooks;
 use think\bit\lifecycle\DeleteAfterHooks;
 
-class Policy extends Base implements AddAfterHooks, DeleteAfterHooks
+class PolicyController extends BaseController implements AddAfterHooks, DeleteAfterHooks
 {
     use OriginListsModel, AddModel, DeleteModel;
     protected $model = 'policy';
@@ -19,7 +21,7 @@ class Policy extends Base implements AddAfterHooks, DeleteAfterHooks
     /**
      * @return bool
      */
-    public function __addAfterHooks($pk)
+    public function __addAfterHooks($pk): bool
     {
         $this->clearRedis();
         return true;
@@ -28,7 +30,7 @@ class Policy extends Base implements AddAfterHooks, DeleteAfterHooks
     /**
      * @return bool
      */
-    public function __deleteAfterHooks()
+    public function __deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
@@ -37,8 +39,8 @@ class Policy extends Base implements AddAfterHooks, DeleteAfterHooks
     /**
      * 清除缓存
      */
-    private function clearRedis()
+    private function clearRedis(): void
     {
-        \app\system\redis\Role::create()->clear();
+        RoleRedis::create()->clear();
     }
 }

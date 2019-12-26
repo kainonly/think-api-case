@@ -1,13 +1,13 @@
 <?php
 return [
     'default' => [
-        'issuer' => 'default',
-        'audience' => 'everyone',
+        'issuer' => 'api.kainonly.com',
+        'audience' => '*',
         'expires' => 3600
     ],
     'system' => [
-        'issuer' => 'system',
-        'audience' => 'everyone',
+        'issuer' => 'api.kainonly.com',
+        'audience' => 'console.kainonly.com',
         'expires' => 3600
     ],
 ];

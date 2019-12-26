@@ -2,6 +2,8 @@
 
 namespace app\system\controller;
 
+use app\system\redis\AdminRedis;
+use Exception;
 use think\bit\common\AddModel;
 use think\bit\common\DeleteModel;
 use think\bit\common\EditModel;
@@ -19,7 +21,7 @@ use think\facade\Db;
 use think\support\facade\Context;
 use think\support\facade\Hash;
 
-class Admin extends Base implements
+class AdminController extends BaseController implements
     GetCustom, AddBeforeHooks, AddAfterHooks, EditBeforeHooks, EditAfterHooks, DeleteBeforeHooks, DeleteAfterHooks
 {
     use GetModel, OriginListsModel, ListsModel, AddModel, EditModel, DeleteModel;
@@ -42,11 +44,10 @@ class Admin extends Base implements
      * 自定义单条数据返回
      * @param array $data
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
-    public function __getCustomReturn(array $data)
+    public function __getCustomReturn(array $data): array
     {
-
         $username = Context::get('auth')->user;
         $rows = Db::name('admin_basic')
             ->where('username', '=', $username)
@@ -66,135 +67,147 @@ class Admin extends Base implements
      * 新增前置处理
      * @return boolean
      */
-    public function __addBeforeHooks()
+    public function __addBeforeHooks(): bool
     {
         $this->role = $this->post['role'];
-        unset($this->post['role']);
         $this->post['password'] = Hash::create($this->post['password']);
+        unset(
+            $this->post['role'],
+        );
         return true;
     }
 
-    /**
-     * @param $id
-     * @return bool
-     * @throws \Exception
-     */
-    public function __addAfterHooks($id)
+    public function __addAfterHooks($id): bool
     {
         $result = Db::name('admin_role')->insert([
             'admin_id' => $id,
             'role_key' => $this->role
         ]);
-
+        if (!$result) {
+            $this->add_after_result = [
+                'error' => 1,
+                'msg' => 'role assoc wrong'
+            ];
+            return false;
+        }
         $this->clearRedis();
-        return $result;
+        return true;
     }
 
     /**
      * 修改前置处理
      * @return boolean
-     * @throws \Exception
+     * @throws Exception
      */
-    public function __editBeforeHooks()
+    public function __editBeforeHooks(): bool
     {
-        $username = Context::get('auth')->user;
-        $rows = Db::name('admin_basic')
-            ->where('username', '=', $username)
-            ->where('status', '=', 1)
-            ->find();
-        if ($rows['id'] == $this->post['id']) {
+        try {
+            $username = Context::get('auth')->user;
+            $rows = Db::name('admin_basic')
+                ->where('username', '=', $username)
+                ->where('status', '=', 1)
+                ->find();
+            if ($rows['id'] == $this->post['id']) {
+                $this->edit_before_result = [
+                    'error' => 1,
+                    'msg' => 'error:self'
+                ];
+                return false;
+            }
+            if (!$this->edit_switch) {
+                $this->role = $this->post['role'];
+                unset(
+                    $this->post['role'],
+                );
+                if (!empty($this->post['password'])) {
+                    validate([
+                        'password' => 'length:8,18',
+                    ])->check($this->post);
+                    $this->post['password'] = Hash::create($this->post['password']);
+                } else {
+                    unset($this->post['password']);
+                }
+            }
+            return true;
+        } catch (Exception $e) {
             $this->edit_before_result = [
                 'error' => 1,
-                'msg' => 'error:self'
+                'msg' => $e->getMessage()
             ];
             return false;
         }
-
-        if (!$this->edit_switch) {
-            if (!empty($this->post['role'])) {
-                $this->role = $this->post['role'];
-                unset($this->post['role']);
-            }
-
-            if (!empty($this->post['password'])) {
-                $validate = validate($this->model);
-                if (!$validate->scene('password')->check($this->post)) {
-                    $this->edit_before_result = [
-                        'error' => 1,
-                        'msg' => 'error:password'
-                    ];
-                    return false;
-                }
-                $this->post['password'] = Hash::create($this->post['password']);
-            } else {
-                unset($this->post['password']);
-            }
-        }
-        return true;
     }
 
-    /**
-     * @return bool
-     * @throws \Exception
-     */
-    public function __editAfterHooks()
+    public function __editAfterHooks(): bool
     {
-        if (!$this->edit_switch) {
-            Db::name('admin_role')
-                ->where('admin_id', '=', $this->post['id'])
-                ->update([
-                    'role_key' => $this->role
-                ]);
+        try {
+            if (!$this->edit_switch) {
+                Db::name('admin_role')
+                    ->where('admin_id', '=', $this->post['id'])
+                    ->update([
+                        'role_key' => $this->role
+                    ]);
+            }
+            $this->clearRedis();
+            return true;
+        } catch (Exception $e) {
+            $this->edit_after_result = [
+                'error' => 1,
+                'msg' => $e->getMessage()
+            ];
+            return false;
         }
-
-        $this->clearRedis();
-        return true;
     }
 
     /**
      * 删除前置处理
      * @return boolean
-     * @throws \Exception
      */
-    public function __deleteBeforeHooks()
+    public function __deleteBeforeHooks(): bool
     {
-        $username = Context::get('auth')->user;
-        $result = Db::name($this->delete_model)
-            ->where('username', '=', $username)
-            ->where('status', '=', 1)
-            ->find();
-        if (in_array($result['id'], $this->post['id'])) {
+        try {
+            $username = Context::get('auth')->user;
+            $result = Db::name($this->delete_model)
+                ->where('username', '=', $username)
+                ->where('status', '=', 1)
+                ->find();
+
+            if (in_array($result['id'], $this->post['id'])) {
+                $this->delete_before_result = [
+                    'error' => 1,
+                    'msg' => 'error:self'
+                ];
+                return false;
+            }
+            return true;
+        } catch (Exception $e) {
             $this->delete_before_result = [
                 'error' => 1,
-                'msg' => 'error:self'
+                'msg' => $e->getMessage()
             ];
             return false;
         }
-        return true;
     }
 
     /**
-     * @return bool
+     * @inheritDoc
      */
-    public function __deleteAfterHooks()
+    public function __deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
     }
 
-    /**
-     * 清除缓存
-     */
     private function clearRedis()
     {
-        \app\system\redis\Admin::create()->clear();
+        AdminRedis::create()->clear();
     }
 
     /**
-     * 验证用户名是否存在
+     * 验证用户是否存在
      * @return array
      */
-    public function validedUsername()
+    public function validedUsername(): array
     {
         if (empty($this->post['username'])) {
             return [

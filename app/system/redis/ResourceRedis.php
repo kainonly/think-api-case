@@ -1,19 +1,21 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\redis;
 
+use Exception;
 use think\facade\Db;
 use think\redis\RedisModel;
 
-class Resource extends RedisModel
+class ResourceRedis extends RedisModel
 {
     protected $key = 'system:resource';
-    private $rows = [];
+    private $data = [];
 
     /**
      * 清除缓存
      */
-    public function clear()
+    public function clear(): void
     {
         $this->redis->del([$this->key]);
     }
@@ -21,24 +23,24 @@ class Resource extends RedisModel
     /**
      * 获取资源
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
-    public function get()
+    public function get(): array
     {
         if (!$this->redis->exists($this->key)) {
             $this->update();
         } else {
-            $this->rows = json_decode($this->redis->get($this->key), true);
+            $raws = $this->redis->get($this->key);
+            $this->data = json_decode($raws, true);
         }
-
-        return $this->rows;
+        return $this->data;
     }
 
     /**
      * 刷新资源
-     * @throws \Exception
+     * @throws Exception
      */
-    private function update()
+    private function update(): void
     {
         $lists = Db::name('resource')
             ->where('status', '=', 1)
@@ -51,6 +53,6 @@ class Resource extends RedisModel
         }
 
         $this->redis->set($this->key, $lists->toJson());
-        $this->rows = $lists->toArray();
+        $this->data = $lists->toArray();
     }
 }

@@ -4,7 +4,7 @@ namespace app\system\validate;
 
 use think\Validate;
 
-class Role extends Validate
+class RoleValidate extends Validate
 {
     protected $rule = [
         'name' => 'require',

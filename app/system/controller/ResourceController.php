@@ -1,7 +1,12 @@
 <?php
+declare (strict_types=1);
 
 namespace app\system\controller;
 
+use Exception;
+use think\facade\Db;
+use app\system\redis\ResourceRedis;
+use app\system\redis\RoleRedis;
 use think\bit\common\AddModel;
 use think\bit\common\DeleteModel;
 use think\bit\common\EditModel;
@@ -11,9 +16,9 @@ use think\bit\lifecycle\AddAfterHooks;
 use think\bit\lifecycle\DeleteAfterHooks;
 use think\bit\lifecycle\DeleteBeforeHooks;
 use think\bit\lifecycle\EditAfterHooks;
-use think\facade\Db;
 
-class Resource extends Base implements AddAfterHooks, EditAfterHooks, DeleteBeforeHooks, DeleteAfterHooks
+
+class ResourceController extends BaseController implements AddAfterHooks, EditAfterHooks, DeleteBeforeHooks, DeleteAfterHooks
 {
     use OriginListsModel, GetModel, AddModel, DeleteModel, EditModel;
 
@@ -21,10 +26,10 @@ class Resource extends Base implements AddAfterHooks, EditAfterHooks, DeleteBefo
     protected $origin_lists_orders = ['sort'];
 
     /**
-     * @param $id
+     * @param int $id
      * @return bool
      */
-    public function __addAfterHooks($id)
+    public function __addAfterHooks($id): bool
     {
         $this->clearRedis();
         return true;
@@ -33,7 +38,7 @@ class Resource extends Base implements AddAfterHooks, EditAfterHooks, DeleteBefo
     /**
      * @return bool
      */
-    public function __editAfterHooks()
+    public function __editAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
@@ -41,9 +46,9 @@ class Resource extends Base implements AddAfterHooks, EditAfterHooks, DeleteBefo
 
     /**
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
-    public function __deleteBeforeHooks()
+    public function __deleteBeforeHooks(): bool
     {
         $data = Db::name($this->model)
             ->whereIn('id', $this->post['id'])
@@ -66,7 +71,7 @@ class Resource extends Base implements AddAfterHooks, EditAfterHooks, DeleteBefo
     /**
      * @return bool
      */
-    public function __deleteAfterHooks()
+    public function __deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
@@ -76,7 +81,7 @@ class Resource extends Base implements AddAfterHooks, EditAfterHooks, DeleteBefo
      * 排序接口
      * @return array
      */
-    public function sort()
+    public function sort(): array
     {
         if (empty($this->post['data'])) {
             return [
@@ -103,17 +108,17 @@ class Resource extends Base implements AddAfterHooks, EditAfterHooks, DeleteBefo
     /**
      * 清除缓存
      */
-    private function clearRedis()
+    private function clearRedis(): void
     {
-        \app\system\redis\Resource::create()->clear();
-        \app\system\redis\Role::create()->clear();
+        ResourceRedis::create()->clear();
+        RoleRedis::create()->clear();
     }
 
     /**
      * 验证访问控制键是否存在
      * @return array
      */
-    public function validedKey()
+    public function validedKey(): array
     {
         if (empty($this->post['key'])) {
             return [
