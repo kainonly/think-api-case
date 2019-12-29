@@ -4,7 +4,7 @@ namespace app\system\validate;
 
 use think\Validate;
 
-class MainValidate extends Validate
+class Main extends Validate
 {
     protected $rule = [
         'username' => 'require|length:4,20',

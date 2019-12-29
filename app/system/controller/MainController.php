@@ -6,7 +6,7 @@ namespace app\system\controller;
 use app\system\redis\AdminRedis;
 use app\system\redis\ResourceRedis;
 use app\system\redis\RoleRedis;
-use app\system\validate\MainValidate;
+use app\system\validate\Main;
 use Exception;
 use think\facade\Db;
 use think\facade\Request;
@@ -35,7 +35,7 @@ class MainController extends BaseController
     public function login(): array
     {
         try {
-            (new MainValidate)->scene('login')
+            (new Main)->scene('login')
                 ->check($this->post);
 
 
@@ -148,7 +148,7 @@ class MainController extends BaseController
     public function update(): array
     {
         try {
-            (new MainValidate)->scene('update')
+            (new Main)->scene('update')
                 ->check($this->post);
 
             $username = Context::get('auth')->user;

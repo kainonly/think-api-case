@@ -4,7 +4,7 @@ namespace app\system\validate;
 
 use think\Validate;
 
-class AclValidate extends Validate
+class Acl extends Validate
 {
     protected $rule = [
         'key' => 'require',

@@ -8,7 +8,7 @@ use think\App;
 use think\support\facade\AMQP;
 use think\support\facade\Redis;
 
-class Index extends BaseController
+class IndexController extends BaseController
 {
     public function index()
     {
