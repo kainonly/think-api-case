@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace app\system\controller;
 
+use app\system\redis\AdminRedis;
 use Exception;
 use think\facade\Db;
 use app\system\redis\RoleRedis;
@@ -115,6 +116,7 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
     private function clearRedis(): void
     {
         RoleRedis::create()->clear();
+        AdminRedis::create()->clear();
     }
 
     /**

@@ -38,7 +38,6 @@ class MainController extends BaseController
             (new Main)->scene('login')
                 ->check($this->post);
 
-
             $raws = AdminRedis::create()
                 ->get($this->post['username']);
 
