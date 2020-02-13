@@ -23,6 +23,7 @@
     "topthink/think-queue": "^3.0"
   },
   "require-dev": {
+    "roave/security-advisories": "dev-master",
     "symfony/var-dumper": "^4.2",
     "topthink/think-trace": "^1.0",
     "topthink/think-migration": "^3.0",
@@ -38,17 +39,16 @@
       "think\\elastic\\": "library/think-elastic/src/",
       "think\\amqp\\": "library/think-amqp/src/",
       "think\\aliyun\\extra\\": "library/think-aliyun-extra/src/"
-    },
-    "psr-0": {
-      "": "extend/"
-    },
-    "classmap": [
-      "tests",
-      "library/think-extra/tests",
-      "library/think-redis/tests",
-      "library/think-amqp/tests",
-      "library/think-elastic/tests"
-    ]
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests",
+      "ExtraTests\\": "library/think-extra/tests",
+      "RedisTests\\": "library/think-redis/tests",
+      "AmqpTests\\": "library/think-amqp/tests",
+      "ElasticTests\\": "library/think-elastic/tests"
+    }
   },
   "config": {
     "preferred-install": "dist"

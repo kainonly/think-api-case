@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace tests;
+namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use think\App;
