@@ -55,7 +55,7 @@ class MainController extends BaseController
                 ];
             }
 
-            return $this->__create('system', [
+            return $this->create('system', [
                 'user' => $raws['username'],
                 'role' => explode(',', $raws['role'])
             ]);
@@ -74,7 +74,7 @@ class MainController extends BaseController
      */
     public function logout(): array
     {
-        return $this->__destory('system');
+        return $this->destory('system');
     }
 
     /**
@@ -83,7 +83,7 @@ class MainController extends BaseController
      */
     public function verify(): array
     {
-        return $this->__verify('system');
+        return $this->authVerify('system');
     }
 
     /**

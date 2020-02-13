@@ -25,7 +25,7 @@ class AclController extends BaseController implements AddAfterHooks, EditAfterHo
      * @param $pk
      * @return bool
      */
-    public function __addAfterHooks($pk): bool
+    public function addAfterHooks($pk): bool
     {
         $this->clearRedis();
         return true;
@@ -34,7 +34,7 @@ class AclController extends BaseController implements AddAfterHooks, EditAfterHo
     /**
      * @return bool
      */
-    public function __editAfterHooks(): bool
+    public function editAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
@@ -43,7 +43,7 @@ class AclController extends BaseController implements AddAfterHooks, EditAfterHo
     /**
      * @return bool
      */
-    public function __deleteAfterHooks(): bool
+    public function deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;

@@ -34,7 +34,7 @@ class ResourceController extends BaseController
      * @param int $id
      * @return bool
      */
-    public function __addAfterHooks($id): bool
+    public function addAfterHooks($id): bool
     {
         $this->clearRedis();
         return true;
@@ -43,7 +43,7 @@ class ResourceController extends BaseController
     /**
      * @inheritDoc
      */
-    public function __editBeforeHooks(): bool
+    public function editBeforeHooks(): bool
     {
         try {
             if (!$this->edit_switch) {
@@ -65,7 +65,7 @@ class ResourceController extends BaseController
     /**
      * @return bool
      */
-    public function __editAfterHooks(): bool
+    public function editAfterHooks(): bool
     {
         try {
             if (!$this->edit_switch && $this->post['key'] != $this->key) {
@@ -90,7 +90,7 @@ class ResourceController extends BaseController
      * @return bool
      * @throws Exception
      */
-    public function __deleteBeforeHooks(): bool
+    public function deleteBeforeHooks(): bool
     {
         $data = Db::name($this->model)
             ->whereIn('id', $this->post['id'])
@@ -113,7 +113,7 @@ class ResourceController extends BaseController
     /**
      * @return bool
      */
-    public function __deleteAfterHooks(): bool
+    public function deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;

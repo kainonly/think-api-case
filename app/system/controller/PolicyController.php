@@ -21,7 +21,7 @@ class PolicyController extends BaseController implements AddAfterHooks, DeleteAf
     /**
      * @return bool
      */
-    public function __addAfterHooks($pk): bool
+    public function addAfterHooks($pk): bool
     {
         $this->clearRedis();
         return true;
@@ -30,7 +30,7 @@ class PolicyController extends BaseController implements AddAfterHooks, DeleteAf
     /**
      * @return bool
      */
-    public function __deleteAfterHooks(): bool
+    public function deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;

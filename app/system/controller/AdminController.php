@@ -47,7 +47,7 @@ class AdminController extends BaseController implements
      * @return array
      * @throws Exception
      */
-    public function __getCustomReturn(array $data): array
+    public function getCustomReturn(array $data): array
     {
         $username = Context::get('auth')->user;
         $rows = Db::name('admin_basic')
@@ -68,7 +68,7 @@ class AdminController extends BaseController implements
      * 新增前置处理
      * @return boolean
      */
-    public function __addBeforeHooks(): bool
+    public function addBeforeHooks(): bool
     {
         $this->role = $this->post['role'];
         $this->post['password'] = Hash::create($this->post['password']);
@@ -78,7 +78,7 @@ class AdminController extends BaseController implements
         return true;
     }
 
-    public function __addAfterHooks($id): bool
+    public function addAfterHooks($id): bool
     {
         $result = Db::name('admin_role')->insert([
             'admin_id' => $id,
@@ -100,7 +100,7 @@ class AdminController extends BaseController implements
      * @return boolean
      * @throws Exception
      */
-    public function __editBeforeHooks(): bool
+    public function editBeforeHooks(): bool
     {
         try {
             $username = Context::get('auth')->user;
@@ -139,7 +139,7 @@ class AdminController extends BaseController implements
         }
     }
 
-    public function __editAfterHooks(): bool
+    public function editAfterHooks(): bool
     {
         try {
             if (!$this->edit_switch) {
@@ -164,7 +164,7 @@ class AdminController extends BaseController implements
      * 删除前置处理
      * @return boolean
      */
-    public function __deleteBeforeHooks(): bool
+    public function deleteBeforeHooks(): bool
     {
         try {
             $username = Context::get('auth')->user;
@@ -193,7 +193,7 @@ class AdminController extends BaseController implements
     /**
      * @inheritDoc
      */
-    public function __deleteAfterHooks(): bool
+    public function deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;

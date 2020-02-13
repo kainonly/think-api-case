@@ -31,7 +31,7 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
     /**
      * @return bool
      */
-    public function __addBeforeHooks(): bool
+    public function addBeforeHooks(): bool
     {
         $this->resource = $this->post['resource'];
         unset(
@@ -44,14 +44,14 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
      * @param int $id
      * @return bool
      */
-    public function __addAfterHooks($id): bool
+    public function addAfterHooks($id): bool
     {
         $resourceLists = [];
         foreach ($this->resource as $key => $value) {
-            array_push($resourceLists, [
+            $resourceLists[] = [
                 'role_key' => $this->post['key'],
                 'resource_key' => $value
-            ]);
+            ];
         }
         $result = Db::name('role_resource')->insertAll($resourceLists);
         if (!$result) {
@@ -64,7 +64,7 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
     /**
      * @return bool
      */
-    public function __editBeforeHooks(): bool
+    public function editBeforeHooks(): bool
     {
         if (!$this->edit_switch) {
             $this->resource = $this->post['resource'];
@@ -79,15 +79,15 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
      * @return bool
      * @throws Exception
      */
-    public function __editAfterHooks(): bool
+    public function editAfterHooks(): bool
     {
         if (!$this->edit_switch) {
             $resourceLists = [];
             foreach ($this->resource as $key => $value) {
-                array_push($resourceLists, [
+                $resourceLists[] = [
                     'role_key' => $this->post['key'],
                     'resource_key' => $value
-                ]);
+                ];
             }
             Db::name('role_resource')
                 ->where('role_key', '=', $this->post['key'])
@@ -104,7 +104,7 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
     /**
      * @return bool
      */
-    public function __deleteAfterHooks(): bool
+    public function deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
