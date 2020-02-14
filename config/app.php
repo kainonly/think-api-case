@@ -6,6 +6,8 @@
 use think\facade\Env;
 
 return [
+    // 应用名称
+    'app_name' => env('app.name', null),
     // 应用地址
     'app_host' => Env::get('app.host', ''),
     // 应用标识
