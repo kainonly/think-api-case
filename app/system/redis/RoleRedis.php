@@ -18,7 +18,7 @@ class RoleRedis extends RedisModel
      */
     public function clear(): void
     {
-        $this->redis->del([$this->key]);
+        $this->redis->del([$this->getKey()]);
     }
 
     /**
@@ -29,10 +29,10 @@ class RoleRedis extends RedisModel
      */
     public function get(string $key, string $type): array
     {
-        if (!$this->redis->exists($this->key)) {
+        if (!$this->redis->exists($this->getKey())) {
             $this->update($key);
         } else {
-            $raws = $this->redis->hget($this->key, $key);
+            $raws = $this->redis->hget($this->getKey(), $key);
             if (!empty($raws)) {
                 $this->data = json_decode($raws, true);
             } else {
@@ -60,7 +60,7 @@ class RoleRedis extends RedisModel
 
         $this->redis->pipeline(function (Pipeline $pipeline) use ($key, $lists) {
             foreach ($lists->toArray() as $key => $value) {
-                $pipeline->hset($this->key, $value['key'], json_encode([
+                $pipeline->hset($this->getKey(), $value['key'], json_encode([
                     'acl' => $value['acl'],
                     'resource' => $value['resource']
                 ]));
