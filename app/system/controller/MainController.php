@@ -94,11 +94,8 @@ class MainController extends BaseController
     {
         try {
             $router = ResourceRedis::create()->get();
-            $role = [];
-            foreach (Context::get('auth')->role as $hasRoleKey) {
-                $resource = RoleRedis::create()->get($hasRoleKey, 'resource');
-                array_push($role, ...$resource);
-            }
+            $role = RoleRedis::create()
+                ->get(Context::get('auth')->role, 'resource');
             $routerRole = array_unique($role);
             $lists = Arr::where($router, function ($value) use ($routerRole) {
                 return in_array($value['key'], $routerRole);

@@ -10,7 +10,6 @@ use think\redis\RedisModel;
 class ResourceRedis extends RedisModel
 {
     protected $key = 'system:resource';
-    private $data = [];
 
     /**
      * 清除缓存
@@ -29,11 +28,9 @@ class ResourceRedis extends RedisModel
     {
         if (!$this->redis->exists($this->getKey())) {
             $this->update();
-        } else {
-            $raws = $this->redis->get($this->getKey());
-            $this->data = json_decode($raws, true);
         }
-        return $this->data;
+        $raws = $this->redis->get($this->getKey());
+        return !empty($raws) ? json_decode($raws, true) : [];
     }
 
     /**
@@ -42,17 +39,16 @@ class ResourceRedis extends RedisModel
      */
     private function update(): void
     {
-        $lists = Db::name('resource')
+        $query = Db::name('resource')
             ->where('status', '=', 1)
             ->withoutField(['id', 'sort', 'status', 'create_time', 'update_time'])
             ->order('sort')
             ->select();
 
-        if ($lists->isEmpty()) {
+        if ($query->isEmpty()) {
             return;
         }
 
-        $this->redis->set($this->getKey(), $lists->toJson());
-        $this->data = $lists->toArray();
+        $this->redis->set($this->getKey(), $query->toJson());
     }
 }

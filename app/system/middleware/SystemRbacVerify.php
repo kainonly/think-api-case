@@ -34,10 +34,7 @@ class SystemRbacVerify
             }
         }
         $roleKey = Context::get('auth')->role;
-        $roleLists = [];
-        foreach ($roleKey as $value) {
-            array_push($roleLists, ...RoleRedis::create()->get($value, 'acl'));
-        }
+        $roleLists = RoleRedis::create()->get($roleKey, 'acl');
         rsort($roleLists);
         $policy = null;
         foreach ($roleLists as $k => $value) {
@@ -47,7 +44,7 @@ class SystemRbacVerify
                 break;
             }
         }
-        if (is_null($policy)) {
+        if ($policy === null) {
             return json([
                 'error' => 1,
                 'msg' => 'rbac invalid, policy is empty',

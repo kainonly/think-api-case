@@ -11,7 +11,6 @@ use think\redis\RedisModel;
 class AclRedis extends RedisModel
 {
     protected $key = 'system:acl';
-    private $data = [];
 
     /**
      * 清除缓存
@@ -30,19 +29,20 @@ class AclRedis extends RedisModel
     public function get(string $key, int $policy): array
     {
         if (!$this->redis->exists($this->getKey())) {
-            $this->update($key);
-        } else {
-            $raws = $this->redis->hget($this->getKey(), $key);
-            $this->data = !empty($raws) ? json_decode($raws, true) : [];
+            $this->update();
         }
+
+        $raws = $this->redis->hget($this->getKey(), $key);
+        $data = !empty($raws) ? json_decode($raws, true) : [];
+
         switch ($policy) {
             case 0:
-                return explode(',', $this->data['read']);
+                return explode(',', $data['read']);
             case 1:
-                return array_merge(
-                    explode(',', $this->data['read']),
-                    explode(',', $this->data['write'])
-                );
+                return [
+                    ...explode(',', $data['read']),
+                    ...explode(',', $data['write'])
+                ];
             default:
                 return [];
         }
@@ -50,32 +50,25 @@ class AclRedis extends RedisModel
 
     /**
      * 更新缓存
-     * @param string $key 访问控制键
      * @throws Exception
      */
-    private function update(string $key): void
+    private function update(): void
     {
-        $lists = Db::name('acl')
+        $query = Db::name('acl')
             ->where('status', '=', 1)
             ->field(['key', 'write', 'read'])
             ->select();
 
-        if ($lists->isEmpty()) {
+        if ($query->isEmpty()) {
             return;
         }
 
-        $this->redis->pipeline(function (Pipeline $pipeline) use ($key, $lists) {
-            foreach ($lists->toArray() as $index => $value) {
+        $this->redis->pipeline(function (Pipeline $pipeline) use ($query) {
+            foreach ($query->toArray() as $value) {
                 $pipeline->hset($this->getKey(), $value['key'], json_encode([
                     'write' => $value['write'],
                     'read' => $value['read']
                 ]));
-                if ($key == $value['key']) {
-                    $this->data = [
-                        'write' => $value['write'],
-                        'read' => $value['read']
-                    ];
-                }
             }
         });
     }
