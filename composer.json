@@ -39,15 +39,18 @@
       "think\\elastic\\": "library/think-elastic/src/",
       "think\\amqp\\": "library/think-amqp/src/",
       "think\\aliyun\\extra\\": "library/think-aliyun-extra/src/"
-    }
+    },
+    "files": [
+      "library/think-extra/src/helper.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\": "tests",
-      "ExtraTests\\": "library/think-extra/tests",
-      "RedisTests\\": "library/think-redis/tests",
-      "AmqpTests\\": "library/think-amqp/tests",
-      "ElasticTests\\": "library/think-elastic/tests"
+      "Tests\\": "tests/",
+      "ExtraTests\\": "library/think-extra/tests/",
+      "RedisTests\\": "library/think-redis/tests/",
+      "AmqpTests\\": "library/think-amqp/tests/",
+      "ElasticTests\\": "library/think-elastic/tests/"
     }
   },
   "config": {

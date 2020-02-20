@@ -11,7 +11,7 @@ class IndexController extends BaseController
     public function index()
     {
         return json([
-            'version' => app()->version()
+            'version' => app()->version(),
         ]);
     }
 }
