@@ -60,7 +60,7 @@ class ExceptionHandle extends Handle
      */
     public function render($request, Throwable $e): Response
     {
-        if ($this->app->http->getName() == 'system') {
+        if ($this->app->http->getName() === 'system') {
             return json([
                 'error' => 1,
                 'msg' => $e->getMessage(),
