@@ -19,3 +19,6 @@
 [submodule "library/think-support"]
 	path = library/think-support
 	url = git@github.com:kainonly/think-support.git
+[submodule "library/think-huaweicloud-extra"]
+	path = library/think-huaweicloud-extra
+	url = git@github.com:kainonly/think-huaweicloud-extra.git
