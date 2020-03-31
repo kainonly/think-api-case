@@ -21,7 +21,8 @@
     "guzzlehttp/guzzle": "^6.3",
     "kain/simplify-amqp": "^1.0",
     "topthink/think-queue": "^3.0",
-    "topthink/think-view": "^1.0"
+    "topthink/think-view": "^1.0",
+    "non0/huaweicloud-obs-sdk": "^3.20"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -39,7 +40,8 @@
       "think\\redis\\": "library/think-redis/src/",
       "think\\elastic\\": "library/think-elastic/src/",
       "think\\amqp\\": "library/think-amqp/src/",
-      "think\\aliyun\\extra\\": "library/think-aliyun-extra/src/"
+      "think\\aliyun\\extra\\": "library/think-aliyun-extra/src/",
+      "think\\huaweicloud\\extra\\": "library/think-huaweicloud-extra/src/"
     },
     "files": [
       "library/think-extra/src/helper.php"
