@@ -8,6 +8,8 @@
     "topthink/framework": "^6.0.0",
     "topthink/think-orm": "^2.0",
     "topthink/think-multi-app": "^1.0",
+    "topthink/think-queue": "^3.0",
+    "topthink/think-view": "^1.0",
     "ramsey/uuid": "^3.8",
     "lcobucci/jwt": "^3.3",
     "ircmaxell/random-lib": "^1.2",
@@ -20,8 +22,6 @@
     "elasticsearch/elasticsearch": "^7.2",
     "guzzlehttp/guzzle": "^6.3",
     "kain/simplify-amqp": "^1.0",
-    "topthink/think-queue": "^3.0",
-    "topthink/think-view": "^1.0",
     "non0/huaweicloud-obs-sdk": "^3.20"
   },
   "require-dev": {
