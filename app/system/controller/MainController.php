@@ -78,6 +78,25 @@ class MainController extends BaseController
     }
 
     /**
+     * @param array $symbol
+     * @return array
+     */
+    protected function authHook(array $symbol): array
+    {
+        $data = AdminRedis::create()->get($symbol['username']);
+        if (empty($data)) {
+            return [
+                'error' => 1,
+                'msg' => 'freeze'
+            ];
+        }
+        return [
+            'error' => 0,
+            'msg' => 'ok'
+        ];
+    }
+
+    /**
      * Token 验证
      * @return array
      */
@@ -85,6 +104,7 @@ class MainController extends BaseController
     {
         return $this->authVerify('system');
     }
+
 
     /**
      * 获取资源控制数据
