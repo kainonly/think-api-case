@@ -14,7 +14,11 @@ use think\support\facade\Context;
 
 class SystemRbacVerify
 {
-    private $except_prefix = [
+    /**
+     * 排除前缀
+     * @var array|string[]
+     */
+    private array $except_prefix = [
         'valided'
     ];
 
@@ -39,7 +43,7 @@ class SystemRbacVerify
         $policy = null;
         foreach ($roleLists as $k => $value) {
             [$roleController, $roleAction] = explode(':', Str::lower($value));
-            if ($roleController == $controller) {
+            if ($roleController === $controller) {
                 $policy = $roleAction;
                 break;
             }
@@ -50,7 +54,7 @@ class SystemRbacVerify
                 'msg' => 'rbac invalid, policy is empty',
             ]);
         }
-        $aclLists = array_map(function ($value) {
+        $aclLists = array_map(static function ($value) {
             return Str::lower($value);
         }, AclRedis::create()->get($controller, (int)$policy));
         if (empty($aclLists)) {
@@ -59,7 +63,7 @@ class SystemRbacVerify
                 'msg' => 'rbac invalid, acl is empty'
             ]);
         }
-        return in_array($action, $aclLists) ? $next($request) : json([
+        return in_array($action, $aclLists, true) ? $next($request) : json([
             'error' => 1,
             'msg' => 'rbac invalid, access denied'
         ]);

@@ -19,7 +19,7 @@ class MainController extends BaseController
 {
     use Auth;
 
-    protected $middleware = ['cors', 'json', 'post',
+    protected $middleware = [
         'system.auth' => [
             'except' => ['login', 'logout', 'verify']
         ],
@@ -38,8 +38,7 @@ class MainController extends BaseController
             (new Main)->scene('login')
                 ->check($this->post);
 
-            $raws = AdminRedis::create()
-                ->get($this->post['username']);
+            $raws = AdminRedis::create()->get($this->post['username']);
 
             if (empty($raws)) {
                 return [
@@ -83,7 +82,7 @@ class MainController extends BaseController
      */
     protected function authHook(array $symbol): array
     {
-        $data = AdminRedis::create()->get($symbol['username']);
+        $data = AdminRedis::create()->get($symbol['user']);
         if (empty($data)) {
             return [
                 'error' => 1,

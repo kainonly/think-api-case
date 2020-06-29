@@ -1,9 +1,7 @@
 <?php
-
-use think\facade\Env;
-
+declare (strict_types=1);
 return [
-    'allow_origin' => explode(',', Env::get('cors.system')),
+    'allow_origin' => explode(',', env('cors.system')),
     'allow_credentials' => true,
     'allow_methods' => ['POST', 'OPTIONS'],
     'expose_headers' => [],

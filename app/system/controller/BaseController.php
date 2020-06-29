@@ -7,9 +7,9 @@ use think\bit\CurdController;
 
 class BaseController extends CurdController
 {
-    protected $middleware = ['cors', 'json', 'post', 'system.auth', 'system.rbac'];
+    protected $middleware = ['system.auth', 'system.rbac'];
 
-    protected function initialize()
+    protected function initialize(): void
     {
         if ($this->request->isPost()) {
             $this->post = $this->request->post();
