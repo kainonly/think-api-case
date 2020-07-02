@@ -3,7 +3,7 @@
   "description": "Example of thinkphp use",
   "type": "project",
   "require": {
-    "php": ">=7.4",
+    "php": ">=7.4.0",
     "ext-json": "*",
     "topthink/framework": "^6.0.0",
     "topthink/think-orm": "^2.0",
