@@ -10,7 +10,7 @@ use think\redis\RedisModel;
 
 class AclRedis extends RedisModel
 {
-    protected $key = 'system:acl';
+    protected string $key = 'system:acl';
 
     /**
      * 清除缓存

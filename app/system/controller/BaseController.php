@@ -7,12 +7,12 @@ use think\bit\CurdController;
 
 class BaseController extends CurdController
 {
-    protected $middleware = ['system.auth', 'system.rbac'];
+    protected array $middleware = ['system.auth', 'system.rbac'];
 
     protected function initialize(): void
     {
         if ($this->request->isPost()) {
-            $this->post = $this->request->post();
+            $this->post = $this->request->post() ?? [];
         }
     }
 }

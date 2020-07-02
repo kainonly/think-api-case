@@ -10,7 +10,7 @@ use think\redis\RedisModel;
 
 class AdminRedis extends RedisModel
 {
-    protected $key = 'system:admin';
+    protected string $key = 'system:admin';
 
     /**
      * 清除缓存

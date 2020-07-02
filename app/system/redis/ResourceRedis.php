@@ -9,7 +9,7 @@ use think\redis\RedisModel;
 
 class ResourceRedis extends RedisModel
 {
-    protected $key = 'system:resource';
+    protected string $key = 'system:resource';
 
     /**
      * 清除缓存

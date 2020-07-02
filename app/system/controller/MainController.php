@@ -19,7 +19,7 @@ class MainController extends BaseController
 {
     use Auth;
 
-    protected $middleware = [
+    protected array $middleware = [
         'system.auth' => [
             'except' => ['login', 'logout', 'verify']
         ],

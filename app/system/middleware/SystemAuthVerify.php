@@ -10,7 +10,7 @@ use think\support\middleware\AuthVerify;
 
 class SystemAuthVerify extends AuthVerify
 {
-    protected $scene = 'system';
+    protected string $scene = 'system';
 
     /**
      * @param stdClass $symbol

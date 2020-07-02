@@ -26,20 +26,21 @@ class AdminController extends BaseController implements
     GetCustom, AddBeforeHooks, AddAfterHooks, EditBeforeHooks, EditAfterHooks, DeleteBeforeHooks, DeleteAfterHooks
 {
     use GetModel, OriginListsModel, ListsModel, AddModel, EditModel, DeleteModel;
-    protected $model = 'admin';
-    protected $add_model = 'admin_basic';
-    protected $edit_model = 'admin_basic';
-    protected $delete_model = 'admin_basic';
-    protected $get_without_field = [
+
+    protected string $model = 'admin';
+    protected string $add_model = 'admin_basic';
+    protected string $edit_model = 'admin_basic';
+    protected string $delete_model = 'admin_basic';
+    protected array $get_without_field = [
         'password', 'update_time', 'create_time'
     ];
-    protected $origin_lists_without_field = [
+    protected array $origin_lists_without_field = [
         'password', 'update_time', 'create_time'
     ];
-    protected $lists_without_field = [
+    protected array $lists_without_field = [
         'password', 'update_time', 'create_time'
     ];
-    private $role;
+    private string $role;
 
     /**
      * 自定义单条数据返回
@@ -54,7 +55,7 @@ class AdminController extends BaseController implements
             ->where('username', '=', $username)
             ->where('status', '=', 1)
             ->find();
-        if ($rows['id'] == $this->post['id']) {
+        if ($rows['id'] === $this->post['id']) {
             $data['self'] = true;
         }
         return [
@@ -108,7 +109,7 @@ class AdminController extends BaseController implements
                 ->where('username', '=', $username)
                 ->where('status', '=', 1)
                 ->find();
-            if ($rows['id'] == $this->post['id']) {
+            if ($rows['id'] === $this->post['id']) {
                 $this->edit_before_result = [
                     'error' => 1,
                     'msg' => 'error:self'
@@ -173,7 +174,7 @@ class AdminController extends BaseController implements
                 ->where('status', '=', 1)
                 ->find();
 
-            if (in_array($result['id'], $this->post['id'])) {
+            if (in_array($result['id'], $this->post['id'], true)) {
                 $this->delete_before_result = [
                     'error' => 1,
                     'msg' => 'error:self'
@@ -199,7 +200,7 @@ class AdminController extends BaseController implements
         return true;
     }
 
-    private function clearRedis()
+    private function clearRedis(): void
     {
         AdminRedis::create()->clear();
     }

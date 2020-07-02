@@ -23,12 +23,12 @@ class ResourceController extends BaseController
 {
     use OriginListsModel, GetModel, AddModel, DeleteModel, EditModel;
 
-    protected $model = 'resource';
-    protected $origin_lists_orders = ['sort'];
+    protected string $model = 'resource';
+    protected array $origin_lists_orders = ['sort'];
     /**
      * @var string
      */
-    private $key;
+    private string $key;
 
     /**
      * @param int $id

@@ -10,7 +10,7 @@ use think\redis\RedisModel;
 
 class RoleRedis extends RedisModel
 {
-    protected $key = 'system:role';
+    protected string $key = 'system:role';
 
     /**
      * 清除缓存

@@ -22,11 +22,12 @@ use think\bit\lifecycle\EditBeforeHooks;
 class RoleController extends BaseController implements AddBeforeHooks, AddAfterHooks, EditBeforeHooks, EditAfterHooks, DeleteAfterHooks
 {
     use GetModel, OriginListsModel, ListsModel, AddModel, EditModel, DeleteModel;
-    protected $model = 'role';
-    protected $add_model = 'role_basic';
-    protected $edit_model = 'role_basic';
-    protected $delete_model = 'role_basic';
-    private $resource = [];
+
+    protected string $model = 'role';
+    protected string $add_model = 'role_basic';
+    protected string $edit_model = 'role_basic';
+    protected string $delete_model = 'role_basic';
+    private array $resource = [];
 
     /**
      * @return bool
