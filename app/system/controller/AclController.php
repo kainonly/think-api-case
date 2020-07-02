@@ -19,7 +19,7 @@ use think\facade\Db;
 class AclController extends BaseController implements AddAfterHooks, EditAfterHooks, DeleteAfterHooks
 {
     use OriginListsModel, ListsModel, AddModel, GetModel, EditModel, DeleteModel;
-    protected $model = 'acl';
+    protected string $model = 'acl';
 
     /**
      * @param $pk
