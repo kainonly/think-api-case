@@ -8,7 +8,7 @@ use think\facade\Env;
 
 return [
     // 默认缓存驱动
-    'default' => Env::get('cache.driver', 'file'),
+    'default' => Env::get('cache.driver', 'redis'),
 
     // 缓存连接方式配置
     'stores' => [
@@ -38,6 +38,7 @@ return [
             'password' => Env::get('redis.password', null),
             // 数据库号
             'select' => (int)Env::get('redis.db', 0),
+            'timeout' => 2.0
         ],
         // 更多的缓存连接
     ],
