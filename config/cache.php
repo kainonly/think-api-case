@@ -1,14 +1,8 @@
 <?php
-
-use think\facade\Env;
-
-// +----------------------------------------------------------------------
-// | 缓存设置
-// +----------------------------------------------------------------------
-
+declare (strict_types=1);
 return [
     // 默认缓存驱动
-    'default' => Env::get('cache.driver', 'redis'),
+    'default' => env('cache.driver', 'redis'),
 
     // 缓存连接方式配置
     'stores' => [
@@ -31,13 +25,13 @@ return [
             // 驱动方式
             'type' => 'redis',
             // 服务器地址
-            'host' => Env::get('redis.host', '127.0.0.1'),
+            'host' => env('redis.host', '127.0.0.1'),
             // 端口
-            'port' => Env::get('redis.port', 6379),
+            'port' => env('redis.port', 6379),
             // 密码
-            'password' => Env::get('redis.password', null),
+            'password' => env('redis.password', null),
             // 数据库号
-            'select' => (int)Env::get('redis.db', 0),
+            'select' => (int)env('redis.db', 0),
             'timeout' => 2.0
         ],
         // 更多的缓存连接

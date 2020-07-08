@@ -1,19 +1,14 @@
 <?php
-// +----------------------------------------------------------------------
-// | 应用设置
-// +----------------------------------------------------------------------
-
-use think\facade\Env;
-
+declare (strict_types=1);
 return [
     // 应用名称
     'app_name' => env('app.name', null),
     // 应用地址
-    'app_host' => Env::get('app.host', ''),
+    'app_host' => env('app.host', ''),
     // 应用标识
-    'app_id' => Env::get('app.id', null),
+    'app_id' => env('app.id', null),
     // 应用密钥
-    'app_secret' => Env::get('app.secret', null),
+    'app_secret' => env('app.secret', null),
     // 应用的命名空间
     'app_namespace' => '',
     // 是否启用路由
