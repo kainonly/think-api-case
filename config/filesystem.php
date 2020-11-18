@@ -23,4 +23,9 @@ return [
         ],
         // 更多的磁盘配置信息
     ],
+    /**
+     * @example aliyun 阿里云OSS对象存储
+     * @example huaweicloud 华为云OBS对象存储
+     */
+    'object_store' => Env::get('filesystem.object_store', 'aliyun')
 ];
