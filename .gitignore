@@ -6,3 +6,4 @@
 /.env
 /composer.lock
 /.phpunit.result.cache
+/app/tests

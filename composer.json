@@ -5,6 +5,7 @@
   "require": {
     "php": ">=7.4.0",
     "ext-json": "*",
+    "ext-curl": "*",
     "topthink/framework": "^6.0.0",
     "topthink/think-orm": "^2.0",
     "topthink/think-multi-app": "^1.0",
@@ -20,9 +21,9 @@
     "predis/predis": "^1.1",
     "aliyuncs/oss-sdk-php": "^2.3",
     "elasticsearch/elasticsearch": "^7.2",
-    "guzzlehttp/guzzle": "^6.3",
-    "kain/simplify-amqp": "^1.0",
-    "non0/huaweicloud-obs-sdk": "^3.20"
+    "guzzlehttp/guzzle": "^7.0",
+    "monolog/monolog": "^1.25.0",
+    "kain/simplify-amqp": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -40,6 +41,7 @@
       "think\\elastic\\": "library/think-elastic/src/",
       "think\\amqp\\": "library/think-amqp/src/",
       "think\\aliyun\\extra\\": "library/think-aliyun-extra/src/",
+      "Obs\\": "library/think-huaweicloud-extra/Obs/",
       "think\\huaweicloud\\extra\\": "library/think-huaweicloud-extra/src/"
     },
     "files": [
