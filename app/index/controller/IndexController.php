@@ -5,6 +5,7 @@ namespace app\index\controller;
 
 use app\common\BaseController;
 use think\App;
+use think\support\facade\Token;
 
 class IndexController extends BaseController
 {

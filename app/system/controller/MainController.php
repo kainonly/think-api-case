@@ -79,6 +79,7 @@ class MainController extends BaseController
     /**
      * @param array $symbol
      * @return array
+     * @throws Exception
      */
     protected function authHook(array $symbol): array
     {
@@ -117,7 +118,7 @@ class MainController extends BaseController
                 ->get(Context::get('auth')->role, 'resource');
             $routerRole = array_unique($role);
             $lists = Arr::where($router, function ($value) use ($routerRole) {
-                return in_array($value['key'], $routerRole);
+                return in_array($value['key'], $routerRole, true);
             });
 
             return [

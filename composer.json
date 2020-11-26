@@ -1,5 +1,5 @@
 {
-  "name": "think/api_case",
+  "name": "think-api-case",
   "description": "Example of thinkphp use",
   "type": "project",
   "require": {
@@ -12,17 +12,16 @@
     "topthink/think-queue": "^3.0",
     "topthink/think-view": "^1.0",
     "ramsey/uuid": "^3.8",
-    "lcobucci/jwt": "^3.3",
+    "lcobucci/jwt": "^4.0",
     "ircmaxell/random-lib": "^1.2",
     "danielstjules/stringy": "^3.1",
     "doctrine/collections": "^1.6",
     "phpseclib/phpseclib": "^2.0",
-    "nesbot/carbon": "^2.10",
+    "nesbot/carbon": "^2.41",
     "predis/predis": "^1.1",
     "aliyuncs/oss-sdk-php": "^2.3",
     "elasticsearch/elasticsearch": "^7.2",
     "guzzlehttp/guzzle": "^7.0",
-    "monolog/monolog": "^1.25.0",
     "kain/simplify-amqp": "^1.0"
   },
   "require-dev": {
@@ -50,7 +49,6 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\": "tests/",
       "ExtraTests\\": "library/think-extra/tests/",
       "RedisTests\\": "library/think-redis/tests/",
       "AmqpTests\\": "library/think-amqp/tests/",
