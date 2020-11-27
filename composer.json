@@ -1,6 +1,6 @@
 {
   "name": "think-api-case",
-  "description": "Example of thinkphp use",
+  "description": "辅助 ThinkPHP(6) 框架的工具集合使用案例，构建简洁统一的中后台接口方案",
   "type": "project",
   "require": {
     "php": ">=7.4.0",
@@ -27,7 +27,6 @@
   "require-dev": {
     "roave/security-advisories": "dev-master",
     "symfony/var-dumper": "^4.2",
-    "topthink/think-migration": "^3.0",
     "phpunit/phpunit": "^8.0.0"
   },
   "autoload": {
