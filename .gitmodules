@@ -22,3 +22,6 @@
 [submodule "library/think-huaweicloud-extra"]
 	path = library/think-huaweicloud-extra
 	url = git@github.com:kainonly/think-huaweicloud-extra.git
+[submodule "library/think-qcloud-extra"]
+	path = library/think-qcloud-extra
+	url = git@github.com:kainonly/think-qcloud-extra.git
