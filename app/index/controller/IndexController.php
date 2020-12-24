@@ -5,11 +5,11 @@ namespace app\index\controller;
 
 use app\common\BaseController;
 use think\App;
-use think\support\facade\Token;
+use think\Response;
 
 class IndexController extends BaseController
 {
-    public function index()
+    public function index(): Response
     {
         return json([
             'version' => app()->version(),

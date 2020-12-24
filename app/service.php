@@ -9,5 +9,6 @@ return [
     think\amqp\service\AMQPService::class,
     think\elastic\service\ElasticService::class,
     think\aliyun\extra\service\OssService::class,
-    think\huaweicloud\extra\service\ObsService::class
+    think\huaweicloud\extra\service\ObsService::class,
+    think\qcloud\extra\service\CosService::class
 ];

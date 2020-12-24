@@ -1,5 +1,4 @@
 {
-  "name": "think-api-case",
   "description": "辅助 ThinkPHP(6) 框架的工具集合使用案例，构建简洁统一的中后台接口方案",
   "type": "project",
   "require": {
@@ -11,23 +10,23 @@
     "topthink/think-multi-app": "^1.0",
     "topthink/think-queue": "^3.0",
     "topthink/think-view": "^1.0",
-    "ramsey/uuid": "^3.8",
+    "ramsey/uuid": "^4.0",
     "lcobucci/jwt": "^4.0",
-    "ircmaxell/random-lib": "^1.2",
     "danielstjules/stringy": "^3.1",
     "doctrine/collections": "^1.6",
-    "phpseclib/phpseclib": "^2.0",
+    "phpseclib/phpseclib": "^3.0",
     "nesbot/carbon": "^2.41",
     "predis/predis": "^1.1",
     "aliyuncs/oss-sdk-php": "^2.3",
     "elasticsearch/elasticsearch": "^7.2",
     "guzzlehttp/guzzle": "^7.0",
-    "kain/simplify-amqp": "^1.0"
+    "kain/simplify-amqp": "^1.0",
+    "overtrue/qcloud-cos-client": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
     "symfony/var-dumper": "^4.2",
-    "phpunit/phpunit": "^8.0.0"
+    "phpunit/phpunit": "^9.0.0"
   },
   "autoload": {
     "psr-4": {
@@ -40,7 +39,8 @@
       "think\\amqp\\": "library/think-amqp/src/",
       "think\\aliyun\\extra\\": "library/think-aliyun-extra/src/",
       "Obs\\": "library/think-huaweicloud-extra/Obs/",
-      "think\\huaweicloud\\extra\\": "library/think-huaweicloud-extra/src/"
+      "think\\huaweicloud\\extra\\": "library/think-huaweicloud-extra/src/",
+      "think\\qcloud\\extra\\": "library/think-qcloud-extra/src/"
     },
     "files": [
       "library/think-extra/src/helper.php"
