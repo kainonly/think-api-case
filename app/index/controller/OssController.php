@@ -23,6 +23,17 @@ class OssController
         ]);
     }
 
+    public function delete(): Response
+    {
+        Oss::delete([
+            '20201224/5607e2c0-d5e4-4f18-9ca8-e7f5055e57cf.jpg',
+            '20201224/f9f09284-d2a1-488f-a1c5-6a4dc49977ec.jpg'
+        ]);
+        return json([
+            'status' => 'ok'
+        ]);
+    }
+
     /**
      * 获取签名web上传
      * @return Response

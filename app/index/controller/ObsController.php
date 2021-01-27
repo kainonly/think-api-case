@@ -23,6 +23,17 @@ class ObsController
         ]);
     }
 
+    public function delete(): Response
+    {
+        Obs::delete([
+            '20201225/17d2e5cb-6d54-4a83-9830-c8e52f129b4b.jpg',
+            '20201225/783bcee3-5f0e-4641-8c8b-84ea717b2451.jpg'
+        ]);
+        return json([
+            'status' => 'ok'
+        ]);
+    }
+
     /**
      * 获取签名web上传
      */
