@@ -19,7 +19,6 @@
     "nesbot/carbon": "^2.41",
     "predis/predis": "^1.1",
     "aliyuncs/oss-sdk-php": "^2.3",
-    "elasticsearch/elasticsearch": "^7.2",
     "guzzlehttp/guzzle": "^7.0",
     "kain/simplify-amqp": "^1.0",
     "overtrue/qcloud-cos-client": "^1.0",
