@@ -4,18 +4,12 @@
 [submodule "library/think-aliyun-extra"]
 	path = library/think-aliyun-extra
 	url = git@github.com:kainonly/think-aliyun-extra.git
-[submodule "library/think-amqp"]
-	path = library/think-amqp
-	url = git@github.com:kainonly/think-amqp.git
 [submodule "library/think-extra"]
 	path = library/think-extra
 	url = git@github.com:kainonly/think-extra.git
 [submodule "library/think-redis"]
 	path = library/think-redis
 	url = git@github.com:kainonly/think-redis.git
-[submodule "library/think-elastic"]
-	path = library/think-elastic
-	url = git@github.com:kainonly/think-elastic.git
 [submodule "library/think-support"]
 	path = library/think-support
 	url = git@github.com:kainonly/think-support.git

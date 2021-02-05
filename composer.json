@@ -20,7 +20,6 @@
     "predis/predis": "^1.1",
     "aliyuncs/oss-sdk-php": "^2.3",
     "guzzlehttp/guzzle": "^7.0",
-    "kain/simplify-amqp": "^1.0",
     "overtrue/qcloud-cos-client": "^1.0",
     "monolog/monolog": "^2.2"
   },
@@ -36,8 +35,6 @@
       "think\\extra\\": "library/think-extra/src/",
       "think\\support\\": "library/think-support/src/",
       "think\\redis\\": "library/think-redis/src/",
-      "think\\elastic\\": "library/think-elastic/src/",
-      "think\\amqp\\": "library/think-amqp/src/",
       "think\\aliyun\\extra\\": "library/think-aliyun-extra/src/",
       "Obs\\": "library/think-huaweicloud-extra/Obs/",
       "think\\huaweicloud\\extra\\": "library/think-huaweicloud-extra/src/",
@@ -50,9 +47,7 @@
   "autoload-dev": {
     "psr-4": {
       "ExtraTests\\": "library/think-extra/tests/",
-      "RedisTests\\": "library/think-redis/tests/",
-      "AmqpTests\\": "library/think-amqp/tests/",
-      "ElasticTests\\": "library/think-elastic/tests/"
+      "RedisTests\\": "library/think-redis/tests/"
     }
   },
   "config": {
