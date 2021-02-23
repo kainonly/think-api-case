@@ -76,7 +76,7 @@ class VideoController extends BaseController
             ->whereIn('id', $this->post['id'])
             ->select()
             ->map(fn($v) => [
-                'Key' => $v->url
+                'Key' => $v['url']
             ])
             ->toArray();
         return true;

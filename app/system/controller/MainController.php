@@ -238,4 +238,16 @@ class MainController extends BaseController
             'msg' => 'upload failed'
         ];
     }
+
+    /**
+     * 对象存储签名
+     * @return array
+     * @throws Exception
+     */
+    public function cosPresigned(): array
+    {
+        return Cos::generatePostPresigned([
+            ['content-length-range', 0, 104857600]
+        ]);
+    }
 }
