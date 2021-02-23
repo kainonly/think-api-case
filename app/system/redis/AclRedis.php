@@ -65,9 +65,9 @@ class AclRedis extends RedisModel
 
         $lists = [];
         foreach ($query->toArray() as $value) {
-            $lists[$value->key] = json_encode([
-                'write' => !empty($value->write) ? explode(',', $value->write) : [],
-                'read' => !empty($value->read) ? explode(',', $value->read) : []
+            $lists[$value['key']] = json_encode([
+                'write' => !empty($value['write']) ? explode(',', $value['write']) : [],
+                'read' => !empty($value['read']) ? explode(',', $value['read']) : []
             ]);
         }
 

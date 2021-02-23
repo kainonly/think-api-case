@@ -53,11 +53,11 @@ class AdminRedis extends RedisModel
 
         $lists = [];
         foreach ($query->toArray() as $value) {
-            $value->role = explode(',', $value->role);
-            $value->resource = !empty($value->resource) ? explode(',', $value->resource) : [];
-            $value->acl = !empty($value->acl) ? explode(',', $value->acl) : [];
-            $value->permission = !empty($value->permission) ? explode(',', $value->permission) : [];
-            $lists[$value->username] = json_encode($value);
+            $value['role'] = explode(',', $value['role']);
+            $value['resource'] = !empty($value['resource']) ? explode(',', $value['resource']) : [];
+            $value['acl'] = !empty($value['acl']) ? explode(',', $value['acl']) : [];
+            $value['permission'] = !empty($value['permission']) ? explode(',', $value['permission']) : [];
+            $lists[$value['username']] = json_encode($value);
         }
         $this->redis->hmset($this->getKey(), $lists);
     }

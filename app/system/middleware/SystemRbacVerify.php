@@ -32,7 +32,7 @@ class SystemRbacVerify
     public function handle(Request $request, Closure $next): Response
     {
         $controller = Str::snake($request->controller(), '_');
-        $action = Str::lower($request->action());
+        $action = $request->action();
         foreach ($this->except_prefix as $value) {
             if (strpos($action, $value) !== false) {
                 return $next($request);

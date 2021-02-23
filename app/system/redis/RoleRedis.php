@@ -56,10 +56,10 @@ class RoleRedis extends RedisModel
         }
         $lists = [];
         foreach ($query->toArray() as $value) {
-            $lists[$value->key] = json_encode([
-                'acl' => !empty($value->acl) ? explode(',', $value->acl) : [],
-                'resource' => !empty($value->resource) ? explode(',', $value->resource) : [],
-                'permission' => !empty($value->permission) ? explode(',', $value->permission) : []
+            $lists[$value['key']] = json_encode([
+                'acl' => !empty($value['acl']) ? explode(',', $value['acl']) : [],
+                'resource' => !empty($value['resource']) ? explode(',', $value['resource']) : [],
+                'permission' => !empty($value['permission']) ? explode(',', $value['permission']) : []
             ]);
         }
         $this->redis->hmset($this->getKey(), $lists);
