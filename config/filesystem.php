@@ -26,6 +26,7 @@ return [
     /**
      * @example aliyun 阿里云OSS对象存储
      * @example huaweicloud 华为云OBS对象存储
+     * @example qcloud 腾讯云COS对象存储
      */
-    'object_store' => Env::get('filesystem.object_store', 'aliyun')
+    'object_store' => Env::get('filesystem.object_store', 'qcloud')
 ];

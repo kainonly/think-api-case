@@ -8,11 +8,15 @@ use app\system\redis\ResourceRedis;
 use app\system\redis\RoleRedis;
 use Exception;
 use think\facade\Db;
+use think\facade\Filesystem;
 use think\facade\Request;
 use think\helper\Arr;
 use think\redis\library\UserLock;
 use think\support\facade\Context;
+use think\support\facade\Cos;
 use think\support\facade\Hash;
+use think\support\facade\Obs;
+use think\support\facade\Oss;
 use think\support\traits\Auth;
 
 class MainController extends BaseController
@@ -197,22 +201,41 @@ class MainController extends BaseController
 
     /**
      * 文件上传
+     * @param string $name
+     * @return array
      */
-    public function uploads(): array
+    public function uploads($name = 'image'): array
     {
-        $file = Request::file('image');
-        $info = $file->move('./uploads');
-        if (!$info) {
-            return [
-                'error' => 1
-            ];
+        $saveName = null;
+        switch (config('filesystem.object_store')) {
+            case 'aliyun':
+                $saveName = Oss::put($name);
+                break;
+            case 'huaweicloud':
+                $saveName = Obs::put($name);
+                break;
+            case 'qcloud':
+                $saveName = Cos::put($name);
+                break;
+            default:
+                $file = Request::file($name);
+                $saveName = date('Ymd') . '/' .
+                    uuid()->toString() . '.' .
+                    $file->getOriginalExtension();
+                Filesystem::disk('public')->putFileAs(
+                    date('Ymd'),
+                    $file,
+                    uuid()->toString() . '.' . $file->getOriginalExtension()
+                );
         }
-        return [
+        return !empty($saveName) ? [
             'error' => 0,
             'data' => [
-                'save_name' => $file,
-                'file_name' => $info->getFilename()
+                'save_name' => $saveName,
             ]
+        ] : [
+            'error' => 1,
+            'msg' => 'upload failed'
         ];
     }
 }
