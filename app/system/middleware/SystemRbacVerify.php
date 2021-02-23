@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace app\system\middleware;
 
+use app\system\redis\AdminRedis;
 use Closure;
 use Exception;
 use think\Request;
@@ -37,35 +38,40 @@ class SystemRbacVerify
                 return $next($request);
             }
         }
-        $roleKey = Context::get('auth')->role;
-        $roleLists = RoleRedis::create()->get($roleKey, 'acl');
-        rsort($roleLists);
-        $policy = null;
-        foreach ($roleLists as $k => $value) {
-            [$roleController, $roleAction] = explode(':', Str::lower($value));
-            if ($roleController === $controller) {
-                $policy = $roleAction;
-                break;
+        $user = AdminRedis::create()->get(Context::get('auth')->user);
+        $acl = [
+            ...RoleRedis::create()->get($user['role'], 'acl'),
+            ...$user['acl']
+        ];
+        $activePolicy = null;
+        foreach ($acl as $value) {
+            [$aclKey, $policy] = explode(':', $value);
+            if ($controller === $aclKey) {
+                $activePolicy = $policy;
+                if ($policy === 1) {
+                    break;
+                }
             }
         }
-        if ($policy === null) {
+        if ($activePolicy === null) {
             return json([
                 'error' => 1,
-                'msg' => 'rbac invalid, policy is empty',
+                'msg' => 'rbac invalid, policy is empty'
             ]);
         }
-        $aclLists = array_map(static function ($value) {
-            return Str::lower($value);
-        }, AclRedis::create()->get($controller, (int)$policy));
-        if (empty($aclLists)) {
+        $lists = AclRedis::create()->get($controller, (int)$activePolicy);
+        if (empty($lists)) {
             return json([
                 'error' => 1,
                 'msg' => 'rbac invalid, acl is empty'
             ]);
         }
-        return in_array($action, $aclLists, true) ? $next($request) : json([
-            'error' => 1,
-            'msg' => 'rbac invalid, access denied'
-        ]);
+        if (!in_array($action, $lists, true)) {
+            return json([
+                'error' => 1,
+                'msg' => 'rbac invalid, access denied'
+            ]);
+        }
+        return $next($request);
     }
 }

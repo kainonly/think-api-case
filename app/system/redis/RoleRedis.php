@@ -35,7 +35,7 @@ class RoleRedis extends RedisModel
         $lists = [];
         foreach ($raws as $value) {
             $data = json_decode($value, true);
-            array_push($lists, ...explode(',', $data[$type]));
+            array_push($lists, ...$data[$type]);
         }
         return $lists;
     }
@@ -46,22 +46,22 @@ class RoleRedis extends RedisModel
      */
     private function update(): void
     {
-        $query = Db::name('role')
+        $query = Db::name('role_mix')
             ->where('status', '=', 1)
-            ->field(['key', 'acl', 'resource'])
+            ->field(['key', 'acl', 'resource', 'permission'])
             ->select();
 
         if ($query->isEmpty()) {
             return;
         }
-
-        $this->redis->pipeline(function (Pipeline $pipeline) use ($query) {
-            foreach ($query->toArray() as $value) {
-                $pipeline->hset($this->getKey(), $value['key'], json_encode([
-                    'acl' => $value['acl'],
-                    'resource' => $value['resource']
-                ]));
-            }
-        });
+        $lists = [];
+        foreach ($query->toArray() as $value) {
+            $lists[$value->key] = json_encode([
+                'acl' => !empty($value->acl) ? explode(',', $value->acl) : [],
+                'resource' => !empty($value->resource) ? explode(',', $value->resource) : [],
+                'permission' => !empty($value->permission) ? explode(',', $value->permission) : []
+            ]);
+        }
+        $this->redis->hmset($this->getKey(), $lists);
     }
 }

@@ -14,6 +14,7 @@ class IndexController extends BaseController
     public function index(): Response
     {
         return json([
+            'framework' => 'thinkphp',
             'version' => app()->version(),
         ]);
     }

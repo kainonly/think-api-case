@@ -6,11 +6,11 @@ namespace app\system\controller;
 use app\system\redis\AdminRedis;
 use app\system\redis\ResourceRedis;
 use app\system\redis\RoleRedis;
-use app\system\validate\Main;
 use Exception;
 use think\facade\Db;
 use think\facade\Request;
 use think\helper\Arr;
+use think\redis\library\UserLock;
 use think\support\facade\Context;
 use think\support\facade\Hash;
 use think\support\traits\Auth;
@@ -31,40 +31,41 @@ class MainController extends BaseController
     /**
      * 登录
      * @return array
+     * @throws Exception
      */
     public function login(): array
     {
-        try {
-            (new Main)->scene('login')
-                ->check($this->post);
+        validate([
+            'username' => 'require|length:4,20',
+            'password' => 'require|length:12,20',
+        ])->check($this->post);
 
-            $raws = AdminRedis::create()->get($this->post['username']);
-
-            if (empty($raws)) {
-                return [
-                    'error' => 1,
-                    'msg' => 'error:status'
-                ];
-            }
-
-            if (!Hash::check($this->post['password'], $raws['password'])) {
-                return [
-                    'error' => 1,
-                    'msg' => 'error:password_incorrect'
-                ];
-            }
-
-            return $this->create('system', [
-                'user' => $raws['username'],
-                'role' => explode(',', $raws['role'])
-            ]);
-
-        } catch (Exception $e) {
+        $data = AdminRedis::create()->get($this->post['username']);
+        if (empty($data)) {
             return [
                 'error' => 1,
-                'msg' => $e->getMessage()
+                'msg' => 'User does not exist or has been frozen'
             ];
         }
+        $userLock = UserLock::create();
+        if (!$userLock->check('admin:' . $this->post['username'])) {
+            $userLock->lock('admin:' . $this->post['username']);
+            return [
+                'error' => 2,
+                'msg' => 'You have failed to log in too many times, please try again later'
+            ];
+        }
+        if (!Hash::check($this->post['password'], $data['password'])) {
+            $userLock->inc('admin:' . $this->post['username']);
+            return [
+                'error' => 1,
+                'msg' => 'User password verification is inconsistent'
+            ];
+        }
+        $userLock->remove('admin:' . $this->post['username']);
+        return $this->create('system', [
+            'user' => $data['username'],
+        ]);
     }
 
     /**
@@ -109,113 +110,109 @@ class MainController extends BaseController
     /**
      * 获取资源控制数据
      * @return array
+     * @throws Exception
      */
     public function resource(): array
     {
-        try {
-            $router = ResourceRedis::create()->get();
-            $role = RoleRedis::create()
-                ->get(Context::get('auth')->role, 'resource');
-            $routerRole = array_unique($role);
-            $lists = Arr::where($router, function ($value) use ($routerRole) {
-                return in_array($value['key'], $routerRole, true);
-            });
-
-            return [
-                'error' => 0,
-                'data' => array_values($lists)
-            ];
-        } catch (Exception $e) {
-            return [
-                'error' => 1,
-                'msg' => $e->getMessage()
-            ];
-        }
+        $router = ResourceRedis::create()->get();
+        $userData = AdminRedis::create()->get(Context::get('auth')->user);
+        $resourceData = [
+            ...RoleRedis::create()->get($userData['role'], 'resource'),
+            ...$userData['resource']
+        ];
+        $routerRole = array_unique($resourceData);
+        $lists = Arr::where(
+            $router,
+            fn($v) => in_array($v['key'], $routerRole, true)
+        );
+        return [
+            'error' => 0,
+            'data' => array_values($lists)
+        ];
     }
 
     /**
      * 获取个人信息
      * @return array
+     * @throws Exception
      */
     public function information(): array
     {
-        try {
-            $data = Db::name('admin_basic')
-                ->where('username', '=', Context::get('auth')->user)
-                ->field(['email', 'phone', 'call', 'avatar'])
-                ->find();
+        $data = Db::name('admin')
+            ->where('username', '=', Context::get('auth')->user)
+            ->field(['email', 'phone', 'call', 'avatar'])
+            ->find();
 
-            return [
-                'error' => 0,
-                'data' => $data
-            ];
-        } catch (Exception $e) {
-            return [
-                'error' => 1,
-                'msg' => $e->getMessage()
-            ];
-        }
+        return [
+            'error' => 0,
+            'data' => $data
+        ];
     }
 
     /**
      * 更新个人信息
      * @return array
+     * @throws Exception
      */
     public function update(): array
     {
-        try {
-            (new Main)->scene('update')
-                ->check($this->post);
+        validate([
+            'old_password' => [
+                'between:12,20',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&-+])(?=.*[0-9])[\w|@$!%*?&-+]+$/'
+            ],
+            'new_password' => [
+                'requireWith:old_password',
+                'between:12,20',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&-+])(?=.*[0-9])[\w|@$!%*?&-+]+$/'
+            ],
+        ])->check($this->post);
 
-            $username = Context::get('auth')->user;
-            $data = Db::name('admin_basic')
-                ->where('username', '=', $username)
-                ->find();
+        $username = Context::get('auth')->user;
+        $data = Db::name('admin_basic')
+            ->where('username', '=', $username)
+            ->find();
 
-            if (!empty($this->post['old_password'])) {
-                if (!Hash::check($this->post['old_password'], $data['password'])) {
-                    return [
-                        'error' => 1,
-                        'msg' => 'error:password'
-                    ];
-                }
-
-                $this->post['password'] = Hash::create($this->post['new_password']);
+        if (!empty($this->post['old_password'])) {
+            if (!Hash::check($this->post['old_password'], $data['password'])) {
+                return [
+                    'error' => 2,
+                    'msg' => 'password verification failed'
+                ];
             }
-
-            unset($this->post['old_password'], $this->post['new_password']);
-            Db::name('admin_basic')
-                ->where('username', '=', $username)
-                ->update($this->post);
-
-            AdminRedis::create()->clear();
-            return [
-                'error' => 0,
-                'msg' => 'ok'
-            ];
-        } catch (Exception $e) {
-            return [
-                'error' => 1,
-                'msg' => $e->getMessage()
-            ];
+            $this->post['password'] = Hash::create($this->post['new_password']);
         }
+
+        unset($this->post['old_password'], $this->post['new_password']);
+        Db::name('admin_basic')
+            ->where('username', '=', $username)
+            ->update($this->post);
+
+        AdminRedis::create()->clear();
+        return [
+            'error' => 0,
+            'msg' => 'ok'
+        ];
     }
 
     /**
      * 文件上传
      */
-    public function uploads()
+    public function uploads(): array
     {
         $file = Request::file('image');
         $info = $file->move('./uploads');
-        return $info ? [
+        if (!$info) {
+            return [
+                'error' => 1
+            ];
+        }
+        return [
             'error' => 0,
             'data' => [
                 'save_name' => $file,
                 'file_name' => $info->getFilename()
             ]
-        ] : [
-            'error' => 1
         ];
     }
 }

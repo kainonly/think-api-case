@@ -7,10 +7,8 @@ use app\system\redis\RoleRedis;
 use think\bit\common\AddModel;
 use think\bit\common\DeleteModel;
 use think\bit\common\OriginListsModel;
-use think\bit\lifecycle\AddAfterHooks;
-use think\bit\lifecycle\DeleteAfterHooks;
 
-class PolicyController extends BaseController implements AddAfterHooks, DeleteAfterHooks
+class PolicyController extends BaseController
 {
     use OriginListsModel, AddModel, DeleteModel;
 
@@ -18,12 +16,16 @@ class PolicyController extends BaseController implements AddAfterHooks, DeleteAf
     protected array $origin_lists_without_field = [];
     protected array $origin_lists_orders = [];
     protected bool $add_auto_timestamp = false;
+    protected array $add_validate = [
+        'resource_key' => 'require',
+        'acl_key' => 'require',
+        'policy' => 'require'
+    ];
 
     /**
-     * @param $pk
      * @return bool
      */
-    public function addAfterHooks($pk): bool
+    public function addAfterHooks(): bool
     {
         $this->clearRedis();
         return true;

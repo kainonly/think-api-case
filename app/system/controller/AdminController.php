@@ -22,25 +22,43 @@ use think\facade\Db;
 use think\support\facade\Context;
 use think\support\facade\Hash;
 
-class AdminController extends BaseController implements
-    GetCustom, AddBeforeHooks, AddAfterHooks, EditBeforeHooks, EditAfterHooks, DeleteBeforeHooks, DeleteAfterHooks
+class AdminController extends BaseController
 {
     use GetModel, OriginListsModel, ListsModel, AddModel, EditModel, DeleteModel;
 
-    protected string $model = 'admin';
-    protected string $add_model = 'admin_basic';
-    protected string $edit_model = 'admin_basic';
-    protected string $delete_model = 'admin_basic';
-    protected array $get_without_field = [
+    private const without_field = [
         'password', 'update_time', 'create_time'
     ];
-    protected array $origin_lists_without_field = [
-        'password', 'update_time', 'create_time'
+
+    protected string $model = 'admin_mix';
+    protected string $add_model = 'admin';
+    protected string $edit_model = 'admin';
+    protected string $delete_model = 'admin';
+    protected array $get_without_field = self::without_field;
+    protected array $origin_lists_without_field = self::without_field;
+    protected array $lists_without_field = self::without_field;
+    protected array $add_validate = [
+        'username' => [
+            'require',
+            'between:4,20'
+        ],
+        'password' => [
+            'require',
+            'between:12,20',
+            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&-+])(?=.*[0-9])[\w|@$!%*?&-+]+$/'
+        ],
+        'role' => ['require', 'array'],
+        'resource' => ['array'],
+        'permission' => ['array']
     ];
-    protected array $lists_without_field = [
-        'password', 'update_time', 'create_time'
+    protected array $edit_validate = [
+        'role' => ['requireIf:switch,false', 'array'],
+        'resource' => ['array'],
+        'permission' => ['array']
     ];
-    private string $role;
+
+    private array $role = [];
+    private array $resource = [];
 
     /**
      * 自定义单条数据返回
@@ -51,7 +69,7 @@ class AdminController extends BaseController implements
     public function getCustomReturn(array $data): array
     {
         $username = Context::get('auth')->user;
-        $rows = Db::name('admin_basic')
+        $rows = Db::name('admin')
             ->where('username', '=', $username)
             ->where('status', '=', 1)
             ->find();
@@ -65,32 +83,28 @@ class AdminController extends BaseController implements
         ];
     }
 
-    /**
-     * 新增前置处理
-     * @return boolean
-     */
     public function addBeforeHooks(): bool
     {
         $this->role = $this->post['role'];
+        unset($this->post['role']);
+        $this->resource = $this->post['resource'];
+        unset($this->post['resource']);
         $this->post['password'] = Hash::create($this->post['password']);
-        unset(
-            $this->post['role'],
-        );
+        $this->post['permission'] = implode(',', $this->post['permission']);
         return true;
     }
 
     public function addAfterHooks($id): bool
     {
-        $result = Db::name('admin_role')->insert([
+        Db::name('admin_role_rel')->insertAll(array_map(static fn($v) => [
             'admin_id' => $id,
-            'role_key' => $this->role
-        ]);
-        if (!$result) {
-            $this->add_after_result = [
-                'error' => 1,
-                'msg' => 'role assoc wrong'
-            ];
-            return false;
+            'role_key' => $v
+        ], $this->role));
+        if (!empty($ctx->resource)) {
+            Db::name('admin_resource_rel')->insertAll(array_map(static fn($v) => [
+                'admin_id' => $id,
+                'resource_key' => $v
+            ], $this->resource));
         }
         $this->clearRedis();
         return true;
@@ -103,92 +117,86 @@ class AdminController extends BaseController implements
      */
     public function editBeforeHooks(): bool
     {
-        try {
-            $username = Context::get('auth')->user;
-            $rows = Db::name('admin_basic')
-                ->where('username', '=', $username)
-                ->where('status', '=', 1)
-                ->find();
-            if ($rows['id'] === $this->post['id']) {
-                $this->edit_before_result = [
-                    'error' => 1,
-                    'msg' => 'error:self'
-                ];
-                return false;
-            }
-            if (!$this->edit_switch) {
-                $this->role = $this->post['role'];
-                unset(
-                    $this->post['role'],
-                );
-                if (!empty($this->post['password'])) {
-                    validate([
-                        'password' => 'length:8,18',
-                    ])->check($this->post);
-                    $this->post['password'] = Hash::create($this->post['password']);
-                } else {
-                    unset($this->post['password']);
-                }
-            }
-            return true;
-        } catch (Exception $e) {
+        $username = Context::get('auth')->user;
+        $data = Db::name('admin_basic')
+            ->where('username', '=', $username)
+            ->where('status', '=', 1)
+            ->find();
+        if ($data['id'] === $this->post['id']) {
             $this->edit_before_result = [
-                'error' => 1,
-                'msg' => $e->getMessage()
+                'error' => 2,
+                'msg' => 'Detected as currently logged in user'
             ];
             return false;
         }
+        if (!$this->edit_switch) {
+            $this->role = $this->post['role'];
+            unset($this->post['role']);
+            if (!empty($this->post['password'])) {
+                validate([
+                    'between:12,20',
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&-+])(?=.*[0-9])[\w|@$!%*?&-+]+$/'
+                ])->check($this->post);
+                $this->post['password'] = Hash::create($this->post['password']);
+            } else {
+                unset($this->post['password']);
+            }
+            $this->post['permission'] = implode(',', $this->post['permission']);
+        }
+        return true;
     }
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
     public function editAfterHooks(): bool
     {
-        try {
-            if (!$this->edit_switch) {
-                Db::name('admin_role')
+        if (!$this->edit_switch) {
+            if (!empty($this->role)) {
+                Db::name('admin_role_rel')
                     ->where('admin_id', '=', $this->post['id'])
-                    ->update([
-                        'role_key' => $this->role
-                    ]);
+                    ->delete();
+                Db::name('admin_role_rel')->insert(array_map(static fn($v) => [
+                    'admin_id' => $this->post['id'],
+                    'role_key' => $v
+                ], $this->role));
             }
-            $this->clearRedis();
-            return true;
-        } catch (Exception $e) {
-            $this->edit_after_result = [
-                'error' => 1,
-                'msg' => $e->getMessage()
-            ];
-            return false;
+            if (!empty($ctx->resource)) {
+                Db::name('admin_resource_rel')
+                    ->where('admin_id', '=', $this->post['id'])
+                    ->delete();
+                Db::name('admin_resource_rel')->insert(array_map(static fn($v) => [
+                    'admin_id' => $this->post['id'],
+                    'resource_key' => $v
+                ], $this->resource));
+            }
         }
+        $this->clearRedis();
+        return true;
     }
 
     /**
      * 删除前置处理
      * @return boolean
+     * @throws Exception
      */
     public function deleteBeforeHooks(): bool
     {
-        try {
-            $username = Context::get('auth')->user;
-            $result = Db::name($this->delete_model)
-                ->where('username', '=', $username)
-                ->where('status', '=', 1)
-                ->find();
+        $username = Context::get('auth')->user;
+        $result = Db::name($this->delete_model)
+            ->where('username', '=', $username)
+            ->where('status', '=', 1)
+            ->find();
 
-            if (in_array($result['id'], $this->post['id'], true)) {
-                $this->delete_before_result = [
-                    'error' => 1,
-                    'msg' => 'error:self'
-                ];
-                return false;
-            }
-            return true;
-        } catch (Exception $e) {
+        if (in_array($result['id'], $this->post['id'], true)) {
             $this->delete_before_result = [
                 'error' => 1,
-                'msg' => $e->getMessage()
+                'msg' => 'error:self'
             ];
             return false;
         }
+        return true;
     }
 
     /**
@@ -214,17 +222,19 @@ class AdminController extends BaseController implements
         if (empty($this->post['username'])) {
             return [
                 'error' => 1,
-                'msg' => 'error:require_username'
+                'msg' => 'require username'
             ];
         }
 
-        $result = Db::name('admin_basic')
+        $exists = Db::name('admin')
             ->where('username', '=', $this->post['username'])
             ->count();
 
         return [
             'error' => 0,
-            'data' => !empty($result)
+            'data' => [
+                'exists' => !empty($exists)
+            ]
         ];
     }
 }

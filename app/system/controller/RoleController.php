@@ -4,7 +4,6 @@ declare (strict_types=1);
 namespace app\system\controller;
 
 use app\system\redis\AdminRedis;
-use Exception;
 use think\facade\Db;
 use app\system\redis\RoleRedis;
 use think\bit\common\AddModel;
@@ -13,48 +12,46 @@ use think\bit\common\EditModel;
 use think\bit\common\GetModel;
 use think\bit\common\ListsModel;
 use think\bit\common\OriginListsModel;
-use think\bit\lifecycle\AddAfterHooks;
-use think\bit\lifecycle\AddBeforeHooks;
-use think\bit\lifecycle\DeleteAfterHooks;
-use think\bit\lifecycle\EditAfterHooks;
-use think\bit\lifecycle\EditBeforeHooks;
 
-class RoleController extends BaseController implements AddBeforeHooks, AddAfterHooks, EditBeforeHooks, EditAfterHooks, DeleteAfterHooks
+class RoleController extends BaseController
 {
     use GetModel, OriginListsModel, ListsModel, AddModel, EditModel, DeleteModel;
 
-    protected string $model = 'role';
-    protected string $add_model = 'role_basic';
-    protected string $edit_model = 'role_basic';
-    protected string $delete_model = 'role_basic';
+    protected string $model = 'role_mix';
+    protected string $add_model = 'role';
+    protected string $edit_model = 'role';
+    protected string $delete_model = 'role';
+    protected array $add_validate = [
+        'name' => 'require|array',
+        'key' => 'require',
+        'resource' => 'require|array'
+    ];
+    protected array $edit_validate = [
+        'name' => 'requireIf:switch,false|array',
+        'key' => 'requireIf:switch,false',
+        'resource' => 'requireIf:switch,false|array'
+    ];
     private array $resource = [];
 
-    /**
-     * @return bool
-     */
     public function addBeforeHooks(): bool
     {
+        $this->post['name'] = json_encode($this->post['name'], JSON_UNESCAPED_UNICODE);
         $this->resource = $this->post['resource'];
-        unset(
-            $this->post['resource'],
-        );
+        unset($this->post['resource']);
+        $this->post['permission'] = implode(',', $this->post['permission']);
         return true;
     }
 
-    /**
-     * @param int $id
-     * @return bool
-     */
-    public function addAfterHooks($id): bool
+    public function addAfterHooks(): bool
     {
-        $resourceLists = [];
+        $resource = [];
         foreach ($this->resource as $key => $value) {
-            $resourceLists[] = [
+            $resource[] = [
                 'role_key' => $this->post['key'],
                 'resource_key' => $value
             ];
         }
-        $result = Db::name('role_resource')->insertAll($resourceLists);
+        $result = Db::name('role_resource_rel')->insertAll($resource);
         if (!$result) {
             return false;
         }
@@ -62,38 +59,31 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
         return true;
     }
 
-    /**
-     * @return bool
-     */
     public function editBeforeHooks(): bool
     {
         if (!$this->edit_switch) {
+            $this->post['name'] = json_encode($this->post['name'], JSON_UNESCAPED_UNICODE);
             $this->resource = $this->post['resource'];
-            unset(
-                $this->post['resource'],
-            );
+            unset($this->post['resource']);
+            $this->post['permission'] = implode(',', $this->post['permission']);
         }
         return true;
     }
 
-    /**
-     * @return bool
-     * @throws Exception
-     */
     public function editAfterHooks(): bool
     {
         if (!$this->edit_switch) {
-            $resourceLists = [];
+            $resource = [];
             foreach ($this->resource as $key => $value) {
-                $resourceLists[] = [
+                $resource[] = [
                     'role_key' => $this->post['key'],
                     'resource_key' => $value
                 ];
             }
-            Db::name('role_resource')
+            Db::name('role_resource_rel')
                 ->where('role_key', '=', $this->post['key'])
                 ->delete();
-            $result = Db::name('role_resource')->insertAll($resourceLists);
+            $result = Db::name('role_resource')->insertAll($resource);
             if (!$result) {
                 return false;
             }
@@ -102,18 +92,12 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
         return true;
     }
 
-    /**
-     * @return bool
-     */
     public function deleteAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
     }
 
-    /**
-     * 清除缓存
-     */
     private function clearRedis(): void
     {
         RoleRedis::create()->clear();
@@ -133,13 +117,15 @@ class RoleController extends BaseController implements AddBeforeHooks, AddAfterH
             ];
         }
 
-        $result = Db::name('role_basic')
+        $exists = Db::name('role')
             ->where('key', '=', $this->post['key'])
             ->count();
 
         return [
             'error' => 0,
-            'data' => !empty($result)
+            'data' => [
+                'exists' => !empty($exists)
+            ]
         ];
     }
 }

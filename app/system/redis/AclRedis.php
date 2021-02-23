@@ -33,15 +33,15 @@ class AclRedis extends RedisModel
         }
 
         $raws = $this->redis->hget($this->getKey(), $key);
-        $data = !empty($raws) ? json_decode($raws, true) : [];
+        $data = json_decode($raws, true);
 
         switch ($policy) {
             case 0:
-                return explode(',', $data['read']);
+                return $data['read'];
             case 1:
                 return [
-                    ...explode(',', $data['read']),
-                    ...explode(',', $data['write'])
+                    ...$data['read'],
+                    ...$data['write']
                 ];
             default:
                 return [];
@@ -63,13 +63,14 @@ class AclRedis extends RedisModel
             return;
         }
 
-        $this->redis->pipeline(function (Pipeline $pipeline) use ($query) {
-            foreach ($query->toArray() as $value) {
-                $pipeline->hset($this->getKey(), $value['key'], json_encode([
-                    'write' => $value['write'],
-                    'read' => $value['read']
-                ]));
-            }
-        });
+        $lists = [];
+        foreach ($query->toArray() as $value) {
+            $lists[$value->key] = json_encode([
+                'write' => !empty($value->write) ? explode(',', $value->write) : [],
+                'read' => !empty($value->read) ? explode(',', $value->read) : []
+            ]);
+        }
+
+        $this->redis->hmset($this->getKey(), $lists);
     }
 }

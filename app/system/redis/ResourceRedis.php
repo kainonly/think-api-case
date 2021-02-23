@@ -41,7 +41,7 @@ class ResourceRedis extends RedisModel
     {
         $query = Db::name('resource')
             ->where('status', '=', 1)
-            ->withoutField(['id', 'sort', 'status', 'create_time', 'update_time'])
+            ->field(['key', 'parent', 'name', 'nav', 'router', 'policy', 'icon'])
             ->order('sort')
             ->select();
 

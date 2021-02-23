@@ -12,29 +12,34 @@ use think\bit\common\DeleteModel;
 use think\bit\common\EditModel;
 use think\bit\common\GetModel;
 use think\bit\common\OriginListsModel;
-use think\bit\lifecycle\AddAfterHooks;
-use think\bit\lifecycle\DeleteAfterHooks;
-use think\bit\lifecycle\DeleteBeforeHooks;
-use think\bit\lifecycle\EditAfterHooks;
-use think\bit\lifecycle\EditBeforeHooks;
 
 class ResourceController extends BaseController
-    implements AddAfterHooks, EditBeforeHooks, EditAfterHooks, DeleteBeforeHooks, DeleteAfterHooks
 {
     use OriginListsModel, GetModel, AddModel, DeleteModel, EditModel;
 
     protected string $model = 'resource';
     protected array $origin_lists_orders = ['sort'];
+    protected array $add_validate = [
+        'key' => 'require',
+        'name' => 'require|array'
+    ];
+    protected array $edit_validate = [
+        'key' => 'requireIf:switch,false',
+        'name' => 'requireIf:switch,false|array'
+    ];
+
     /**
      * @var string
      */
     private string $key;
 
-    /**
-     * @param int $id
-     * @return bool
-     */
-    public function addAfterHooks($id): bool
+    public function addBeforeHooks(): bool
+    {
+        $this->post['name'] = json_encode($this->post['name'], JSON_UNESCAPED_UNICODE);
+        return true;
+    }
+
+    public function addAfterHooks(): bool
     {
         $this->clearRedis();
         return true;
@@ -45,45 +50,31 @@ class ResourceController extends BaseController
      */
     public function editBeforeHooks(): bool
     {
-        try {
-            if (!$this->edit_switch) {
-                $data = Db::name($this->model)
-                    ->where('id', '=', $this->post['id'])
-                    ->find();
-                $this->key = $data['key'];
-            }
-            return true;
-        } catch (Exception $e) {
-            $this->edit_before_result = [
-                'error' => 1,
-                'msg' => $e->getMessage()
-            ];
-            return false;
+        if (!$this->edit_switch) {
+            $this->post['name'] = json_encode($this->post['name'], JSON_UNESCAPED_UNICODE);
+            $data = Db::name($this->model)
+                ->where('id', '=', $this->post['id'])
+                ->find();
+            $this->key = $data['key'];
         }
+        return true;
     }
 
     /**
      * @return bool
+     * @throws Exception
      */
     public function editAfterHooks(): bool
     {
-        try {
-            if (!$this->edit_switch && $this->post['key'] != $this->key) {
-                Db::name($this->model)
-                    ->where('parent', '=', $this->key)
-                    ->update([
-                        'parent' => $this->post['key']
-                    ]);
-            }
-            $this->clearRedis();
-            return true;
-        } catch (Exception $e) {
-            $this->edit_after_result = [
-                'error' => 1,
-                'msg' => $e->getMessage()
-            ];
-            return false;
+        if (!$this->edit_switch && !empty($this->key)) {
+            Db::name($this->model)
+                ->where('parent', '=', $this->key)
+                ->update([
+                    'parent' => $this->post['key']
+                ]);
         }
+        $this->clearRedis();
+        return true;
     }
 
     /**
@@ -96,18 +87,18 @@ class ResourceController extends BaseController
             ->whereIn('id', $this->post['id'])
             ->find();
 
-        $result = Db::name($this->model)
+        $exists = Db::name($this->model)
             ->where('parent', '=', $data['key'])
             ->count();
 
-        if (!empty($result)) {
+        if (!empty($exists)) {
             $this->delete_before_result = [
                 'error' => 1,
-                'msg' => 'error:has_child'
+                'msg' => 'not exist'
             ];
         }
 
-        return empty($result);
+        return empty($exists);
     }
 
     /**
@@ -125,16 +116,17 @@ class ResourceController extends BaseController
      */
     public function sort(): array
     {
-        if (empty($this->post['data'])) {
-            return [
-                'error' => 1,
-                'msg' => 'error'
-            ];
-        }
+        validate([
+            'data' => 'require|array',
+        ])->check($this->post);
 
         return Db::transaction(function () {
             foreach ($this->post['data'] as $value) {
-                Db::name($this->model)->update($value);
+                Db::name($this->model)
+                    ->where('id', '=', $value['id'])
+                    ->update([
+                        'sort' => $value['sort']
+                    ]);
             }
             $this->clearRedis();
             return true;
@@ -175,7 +167,9 @@ class ResourceController extends BaseController
 
         return [
             'error' => 0,
-            'data' => !empty($result)
+            'data' => [
+                'exists' => !empty($result)
+            ]
         ];
     }
 }
