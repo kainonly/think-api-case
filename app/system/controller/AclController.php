@@ -21,12 +21,14 @@ class AclController extends BaseController
     protected array $add_validate = [
         'name' => 'require|array',
         'key' => 'require',
-        'resource' => 'require|array'
+        'write' => 'array',
+        'read' => 'array'
     ];
     protected array $edit_validate = [
-        'name' => 'requireIf:switch,false|array',
-        'key' => 'requireIf:switch,false',
-        'resource' => 'requireIf:switch,false|array'
+        'name' => 'requireIf:switch,0|array',
+        'key' => 'requireIf:switch,0',
+        'write' => 'array',
+        'read' => 'array'
     ];
 
     public function addBeforeHooks(): bool
@@ -43,7 +45,9 @@ class AclController extends BaseController
 
     public function editBeforeHooks(): bool
     {
-        $this->before();
+        if (!$this->edit_switch) {
+            $this->before();
+        }
         return true;
     }
 

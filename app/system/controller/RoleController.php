@@ -27,9 +27,9 @@ class RoleController extends BaseController
         'resource' => 'require|array'
     ];
     protected array $edit_validate = [
-        'name' => 'requireIf:switch,false|array',
-        'key' => 'requireIf:switch,false',
-        'resource' => 'requireIf:switch,false|array'
+        'name' => 'requireIf:switch,0|array',
+        'key' => 'requireIf:switch,0',
+        'resource' => 'requireIf:switch,0|array'
     ];
     private array $resource = [];
 

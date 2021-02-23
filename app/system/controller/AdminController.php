@@ -52,7 +52,7 @@ class AdminController extends BaseController
         'permission' => ['array']
     ];
     protected array $edit_validate = [
-        'role' => ['requireIf:switch,false', 'array'],
+        'role' => ['requireIf:switch,0', 'array'],
         'resource' => ['array'],
         'permission' => ['array']
     ];

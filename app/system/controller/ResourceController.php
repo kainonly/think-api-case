@@ -24,8 +24,8 @@ class ResourceController extends BaseController
         'name' => 'require|array'
     ];
     protected array $edit_validate = [
-        'key' => 'requireIf:switch,false',
-        'name' => 'requireIf:switch,false|array'
+        'key' => 'requireIf:switch,0',
+        'name' => 'requireIf:switch,0|array'
     ];
 
     /**
