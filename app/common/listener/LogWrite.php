@@ -1,7 +1,7 @@
 <?php
 declare (strict_types=1);
 
-namespace app\listener;
+namespace app\common\listener;
 
 class LogWrite
 {

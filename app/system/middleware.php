@@ -3,5 +3,5 @@
 return [
     think\support\middleware\Cors::class,
     think\support\middleware\JsonResponse::class,
-    think\support\middleware\FilterPostRequest::class
+    think\support\middleware\FilterPostRequest::class,
 ];

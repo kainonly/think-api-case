@@ -6,7 +6,6 @@ namespace app\index\controller;
 use app\common\BaseController;
 use think\App;
 use think\facade\Filesystem;
-use think\facade\Log;
 use think\facade\Request;
 use think\Response;
 

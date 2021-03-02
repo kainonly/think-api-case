@@ -9,8 +9,10 @@ return [
         'redis' => [
             // 驱动方式
             'type' => 'redis',
+            // 队列名称
+            'queue' => Env::get('app.name') . ':async',
             // 连接方式
-            'persistent' => 'connect',
+            'persistent' => 'pconnect',
             // 服务器地址
             'host' => Env::get('redis.host', '127.0.0.1'),
             // 端口
@@ -21,22 +23,6 @@ return [
             'select' => (int)Env::get('redis.db', 0),
             // 超时
             'timeout' => 60,
-            // 队列名称
-            'queue' => 'mytest'
         ],
-    ],
-    'rabbitmq' => [
-        'default' => [
-            // 服务器地址
-            'hostname' => Env::get('rabbitmq.host', 'localhost'),
-            // 端口号
-            'port' => Env::get('rabbitmq.port', 5672),
-            // 虚拟域
-            'virualhost' => Env::get('rabbitmq.virualhost', '/'),
-            // 用户名
-            'username' => Env::get('rabbitmq.username', 'guest'),
-            // 密码
-            'password' => Env::get('rabbitmq.password', 'guest'),
-        ]
     ]
 ];

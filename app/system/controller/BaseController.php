@@ -7,7 +7,7 @@ use think\bit\CurdController;
 
 class BaseController extends CurdController
 {
-    protected array $middleware = ['system.auth', 'system.rbac'];
+    protected array $middleware = ['system.auth', 'system.spy', 'system.rbac'];
 
     protected function initialize(): void
     {

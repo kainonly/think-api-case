@@ -27,6 +27,7 @@ class MainController extends BaseController
         'system.auth' => [
             'except' => ['login', 'logout', 'verify']
         ],
+        'system.spy',
         'system.rbac' => [
             'only' => ['uploads']
         ]

@@ -10,7 +10,7 @@ return [
         'HttpEnd' => [],
         'LogLevel' => [],
         'LogWrite' => [
-            app\listener\LogWrite::class
+            app\common\listener\LogWrite::class
         ],
     ],
 
