@@ -11,7 +11,7 @@ use think\facade\Db;
 use think\facade\Filesystem;
 use think\facade\Request;
 use think\helper\Arr;
-use think\redis\library\UserLock;
+use think\redis\library\Lock;
 use think\support\facade\Context;
 use think\support\facade\Cos;
 use think\support\facade\Hash;
@@ -43,30 +43,39 @@ class MainController extends BaseController
             'username' => 'require|length:4,20',
             'password' => 'require|length:12,20',
         ])->check($this->post);
-
+        $locker = Lock::create();
+        $ip = get_client_ip();
+        if (!$locker->check('ip:' . $ip)) {
+            $locker->lock('ip:' . $ip);
+            return [
+                'error' => 2,
+                'msg' => 'You have failed to log in too many times, please try again later'
+            ];
+        }
         $data = AdminRedis::create()->get($this->post['username']);
         if (empty($data)) {
+            $locker->inc('ip:' . $ip);
             return [
                 'error' => 1,
                 'msg' => 'User does not exist or has been frozen'
             ];
         }
-        $userLock = UserLock::create();
-        if (!$userLock->check('admin:' . $this->post['username'])) {
-            $userLock->lock('admin:' . $this->post['username']);
+        if (!$locker->check('admin:' . $this->post['username'])) {
+            $locker->lock('admin:' . $this->post['username']);
             return [
                 'error' => 2,
                 'msg' => 'You have failed to log in too many times, please try again later'
             ];
         }
         if (!Hash::check($this->post['password'], $data['password'])) {
-            $userLock->inc('admin:' . $this->post['username']);
+            $locker->inc('admin:' . $this->post['username']);
             return [
                 'error' => 1,
                 'msg' => 'User password verification is inconsistent'
             ];
         }
-        $userLock->remove('admin:' . $this->post['username']);
+        $locker->remove('ip:' . $ip);
+        $locker->remove('admin:' . $this->post['username']);
         return $this->create('system', [
             'user' => $data['username'],
         ]);

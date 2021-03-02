@@ -5,11 +5,13 @@ return [
     ],
 
     'listen'    => [
-        'AppInit'  => [],
-        'HttpRun'  => [],
-        'HttpEnd'  => [],
+        'AppInit' => [],
+        'HttpRun' => [],
+        'HttpEnd' => [],
         'LogLevel' => [],
-        'LogWrite' => [],
+        'LogWrite' => [
+            app\listener\LogWrite::class
+        ],
     ],
 
     'subscribe' => [
