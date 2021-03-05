@@ -75,14 +75,12 @@ class VideoController extends BaseController
         $this->objects = Db::name($this->model)
             ->whereIn('id', $this->post['id'])
             ->select()
-            ->map(fn($v) => [
-                'Key' => $v['url']
-            ])
+            ->map(fn($v) => $v['url'])
             ->toArray();
         return true;
     }
 
-    public function deleteAfterHook(stdClass $ctx): bool
+    public function deleteAfterHook(): bool
     {
         switch (config('filesystem.object_store')) {
             case 'aliyun':
