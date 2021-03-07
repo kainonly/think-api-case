@@ -100,7 +100,7 @@ class AdminController extends BaseController
             'admin_id' => $id,
             'role_key' => $v
         ], $this->role));
-        if (!empty($ctx->resource)) {
+        if (!empty($this->resource)) {
             Db::name('admin_resource_rel')->insertAll(array_map(static fn($v) => [
                 'admin_id' => $id,
                 'resource_key' => $v
@@ -162,7 +162,7 @@ class AdminController extends BaseController
                     'role_key' => $v
                 ], $this->role));
             }
-            if (!empty($ctx->resource)) {
+            if (!empty($this->resource)) {
                 Db::name('admin_resource_rel')
                     ->where('admin_id', '=', $this->post['id'])
                     ->delete();
