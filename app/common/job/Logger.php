@@ -10,7 +10,21 @@ class Logger
 {
     public function fire(Job $job, array $data): void
     {
-        $result = Db::name('logger')->insert($data);
+        if ($job->attempts() > 3) {
+            $job->delete();
+        }
+        switch ($data['channel']) {
+            case 'request':
+                $result = Db::name('request_log')
+                    ->insert($data['values']);
+                break;
+            case 'login':
+
+
+                $result = Db::name('login_log')
+                    ->insert($data['values']);
+                break;
+        }
         if (!empty($result)) {
             $job->delete();
         }
