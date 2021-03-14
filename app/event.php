@@ -9,9 +9,7 @@ return [
         'HttpRun' => [],
         'HttpEnd' => [],
         'LogLevel' => [],
-        'LogWrite' => [
-            app\common\listener\LogWrite::class
-        ],
+        'LogWrite' => [],
     ],
 
     'subscribe' => [
