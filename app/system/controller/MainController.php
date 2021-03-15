@@ -10,7 +10,6 @@ use Exception;
 use think\facade\Db;
 use think\facade\Filesystem;
 use think\facade\Request;
-use think\helper\Arr;
 use think\redis\library\Lock;
 use think\support\facade\Context;
 use think\support\facade\Cos;
@@ -129,15 +128,16 @@ class MainController extends BaseController
     public function resource(): array
     {
         $router = ResourceRedis::create()->get();
-        $userData = AdminRedis::create()->get(Context::get('auth')->user);
+        $user = Context::get('auth')->user;
+        $data = AdminRedis::create()->get($user);
         $resourceData = [
-            ...RoleRedis::create()->get($userData['role'], 'resource'),
-            ...$userData['resource']
+            ...RoleRedis::create()->get($data['role'], 'resource'),
+            ...$data['resource']
         ];
         $routerRole = array_unique($resourceData);
-        $lists = Arr::where(
-            $router,
-            fn($v) => in_array($v['key'], $routerRole, true)
+        $lists = array_filter($router,
+            static fn($v) => in_array($v['key'], $routerRole, true),
+            ARRAY_FILTER_USE_BOTH
         );
         return [
             'error' => 0,
