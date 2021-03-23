@@ -83,7 +83,7 @@ class RoleController extends BaseController
             Db::name('role_resource_rel')
                 ->where('role_key', '=', $this->post['key'])
                 ->delete();
-            $result = Db::name('role_resource')->insertAll($resource);
+            $result = Db::name('role_resource_rel')->insertAll($resource);
             if (!$result) {
                 return false;
             }
