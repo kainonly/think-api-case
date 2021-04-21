@@ -3,11 +3,11 @@ declare (strict_types=1);
 
 namespace app\system\controller;
 
+use Exception;
+use think\facade\Db;
 use app\system\redis\AdminRedis;
 use app\system\redis\ResourceRedis;
 use app\system\redis\RoleRedis;
-use Exception;
-use think\facade\Db;
 use think\facade\Filesystem;
 use think\facade\Request;
 use think\redis\library\Lock;
@@ -26,10 +26,9 @@ class MainController extends BaseController
         'system.auth' => [
             'except' => ['login', 'logout', 'verify']
         ],
-        'system.spy',
-        'system.rbac' => [
-            'only' => ['uploads']
-        ]
+        'system.spy' => [
+            'only' => ['information', 'update']
+        ],
     ];
 
     /**
@@ -42,42 +41,86 @@ class MainController extends BaseController
         validate([
             'username' => 'require|length:4,20',
             'password' => 'require|length:12,20',
+            'mode' => 'require|number',
         ])->check($this->post);
         $locker = Lock::create();
         $ip = get_client_ip();
+        // TODO: GET ISP
         if (!$locker->check('ip:' . $ip)) {
             $locker->lock('ip:' . $ip);
+            // Logger IP登录锁定
             return [
                 'error' => 2,
-                'msg' => 'You have failed to log in too many times, please try again later'
+                'msg' => '当前尝试登录失败次数上限，请稍后再试'
             ];
         }
-        $data = AdminRedis::create()->get($this->post['username']);
+        $user = $this->post['username'];
+        $notAdmin = $this->post['mode'] !== 0;
+        $data = $notAdmin ? $this->fetchUserData($user) : AdminRedis::create()->get($user);
         if (empty($data)) {
             $locker->inc('ip:' . $ip);
+            // Logger 用户不存在或冻结
             return [
                 'error' => 1,
-                'msg' => 'User does not exist or has been frozen'
+                'msg' => '当前用户不存在或已被冻结'
             ];
         }
-        if (!$locker->check('admin:' . $this->post['username'])) {
-            $locker->lock('admin:' . $this->post['username']);
+        $userKey = $notAdmin ? $this->fetchUserKey() : 'admin';
+        if (!$locker->check($userKey . $user)) {
+            $locker->lock($userKey . $user);
+            // Logger 用户登录失败上限
             return [
                 'error' => 2,
-                'msg' => 'You have failed to log in too many times, please try again later'
+                'msg' => '当前用户登录失败次数以上限，请稍后再试'
             ];
         }
         if (!Hash::check($this->post['password'], $data['password'])) {
-            $locker->inc('admin:' . $this->post['username']);
+            $locker->inc($userKey . $user);
+            // Logger 用户登录密码不正确
             return [
                 'error' => 1,
-                'msg' => 'User password verification is inconsistent'
+                'msg' => '当前用户认证不成功'
             ];
         }
         $locker->remove('ip:' . $ip);
-        $locker->remove('admin:' . $this->post['username']);
+        $locker->remove($userKey . $user);
+        // Logger ISP
         return $this->create('system', [
             'user' => $data['username'],
+        ]);
+    }
+
+    /**
+     * 其他模式下用户返回数据
+     * @param string $user
+     * @return array
+     */
+    protected function fetchUserData(string $user): array
+    {
+        return [];
+    }
+
+    /**
+     * 其他模式下用户锁定
+     * @return string
+     */
+    protected function fetchUserKey(): string
+    {
+        return 'user:';
+    }
+
+    /**
+     * 认证返回，自定义标识变量
+     * @param array $data 用户数据
+     * @param int $mode 登录模式代码
+     * @return array
+     * @throws Exception
+     */
+    protected function loginAfter(array $data, int $mode): array
+    {
+        return $this->create('system', [
+            'user' => $data['username'],
+            'mode' => $mode
         ]);
     }
 
@@ -97,7 +140,12 @@ class MainController extends BaseController
      */
     protected function authHook(array $symbol): array
     {
-        $data = AdminRedis::create()->get($symbol['user']);
+        if ($symbol['mode'] !== 0) {
+            $data = $this->fetchUserData($symbol['user']);
+        } else {
+            $data = AdminRedis::create()->get($symbol['user']);
+        }
+
         if (empty($data)) {
             return [
                 'error' => 1,
@@ -129,7 +177,8 @@ class MainController extends BaseController
     {
         $router = ResourceRedis::create()->get();
         $user = Context::get('auth')->user;
-        $data = AdminRedis::create()->get($user);
+        $notAdmin = Context::get('auth')->mode !== 0;
+        $data = $notAdmin ? $this->fetchUserData($user) : AdminRedis::create()->get($user);
         $resourceData = [
             ...RoleRedis::create()->get($data['role'], 'resource'),
             ...$data['resource']
@@ -152,15 +201,35 @@ class MainController extends BaseController
      */
     public function information(): array
     {
-        $data = Db::name('admin')
-            ->where('username', '=', Context::get('auth')->user)
-            ->field(['email', 'phone', 'call', 'avatar'])
-            ->find();
+        $user = Context::get('auth')->user;
+        if (Context::get('auth')->mode !== 0) {
+            $data = $this->fetchInformation($user);
+        } else {
+            $data = Db::name('admin')
+                ->where('username', '=', $user)
+                ->find();
+        }
 
         return [
             'error' => 0,
-            'data' => $data
+            'data' => [
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'realname' => $data['realname'],
+                'avatar' => $data['avatar']
+            ]
         ];
+    }
+
+    /**
+     * 其他模式下用户数据信息
+     * @param string $user
+     * @return array
+     */
+    protected function fetchInformation(string $user): array
+    {
+        return [];
     }
 
     /**
@@ -182,10 +251,16 @@ class MainController extends BaseController
             ],
         ])->check($this->post);
 
-        $username = Context::get('auth')->user;
-        $data = Db::name('admin_basic')
-            ->where('username', '=', $username)
-            ->find();
+        $user = Context::get('auth')->user;
+        $notAdmin = Context::get('auth')->mode !== 0;
+
+        if ($notAdmin) {
+            $data = $this->fetchInformation($user);
+        } else {
+            $data = Db::name('admin')
+                ->where('username', '=', $user)
+                ->find();
+        }
 
         if (!empty($this->post['old_password'])) {
             if (!Hash::check($this->post['old_password'], $data['password'])) {
@@ -198,11 +273,16 @@ class MainController extends BaseController
         }
 
         unset($this->post['old_password'], $this->post['new_password']);
-        Db::name('admin_basic')
-            ->where('username', '=', $username)
-            ->update($this->post);
 
-        AdminRedis::create()->clear();
+        if ($notAdmin) {
+            $this->setUpdate($user);
+        } else {
+            Db::name('admin')
+                ->where('username', '=', $user)
+                ->update($this->post);
+            AdminRedis::create()->clear();
+        }
+
         return [
             'error' => 0,
             'msg' => 'ok'
@@ -210,9 +290,19 @@ class MainController extends BaseController
     }
 
     /**
+     * 其他模式用户更新
+     * @param string $user
+     */
+    protected function setUpdate(string $user): void
+    {
+        // TODO: 自定义
+    }
+
+    /**
      * 文件上传
      * @param string $name
      * @return array
+     * @throws Exception
      */
     public function uploads($name = 'image'): array
     {
@@ -238,14 +328,18 @@ class MainController extends BaseController
                     uuid()->toString() . '.' . $file->getOriginalExtension()
                 );
         }
-        return !empty($saveName) ? [
+        if (empty($saveName)) {
+            return [
+                'error' => 1,
+                'msg' => '上传尚未完成'
+            ];
+        }
+
+        return [
             'error' => 0,
             'data' => [
                 'save_name' => $saveName,
             ]
-        ] : [
-            'error' => 1,
-            'msg' => 'upload failed'
         ];
     }
 
@@ -254,10 +348,55 @@ class MainController extends BaseController
      * @return array
      * @throws Exception
      */
-    public function cosPresigned(): array
+    public function presigned(): array
     {
-        return Cos::generatePostPresigned([
-            ['content-length-range', 0, 104857600]
-        ]);
+        switch (config('filesystem.object_store')) {
+            case 'aliyun':
+                return Oss::generatePostPresigned($this->presignedConditions());
+            case 'huaweicloud':
+                return Obs::generatePostPresigned($this->presignedConditions());
+            case 'qcloud':
+                return Cos::generatePostPresigned($this->presignedConditions());
+        }
+//        return Cos::generatePostPresigned([
+//            ['content-length-range', 0, 104857600]
+//        ]);
+        return [];
+    }
+
+    /**
+     * 设定对象存储 Policy
+     * @return array
+     */
+    protected function presignedConditions(): array
+    {
+        return [];
+    }
+
+    /**
+     * 对象存储删除对象
+     * @return array
+     */
+    public function objectDelete(): array
+    {
+        validate([
+            'keys' => 'require|array'
+        ])->check($this->post);
+
+        switch (config('filesystem.object_store')) {
+            case 'aliyun':
+                Oss::delete($this->post['keys']);
+                break;
+            case 'huaweicloud':
+                Obs::delete($this->post['keys']);
+                break;
+            case 'qcloud':
+                Cos::delete($this->post['keys']);
+                break;
+        }
+        return [
+            'error' => 0,
+            'msg' => 'ok'
+        ];
     }
 }
