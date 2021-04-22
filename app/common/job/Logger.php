@@ -19,8 +19,6 @@ class Logger
                     ->insert($data['values']);
                 break;
             case 'login':
-
-
                 $result = Db::name('login_log')
                     ->insert($data['values']);
                 break;

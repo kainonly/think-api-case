@@ -8,14 +8,10 @@ use think\facade\Db;
 use app\system\redis\AdminRedis;
 use app\system\redis\ResourceRedis;
 use app\system\redis\RoleRedis;
-use think\facade\Filesystem;
-use think\facade\Request;
 use think\redis\library\Lock;
 use think\support\facade\Context;
 use think\support\facade\Cos;
 use think\support\facade\Hash;
-use think\support\facade\Obs;
-use think\support\facade\Oss;
 use think\support\traits\Auth;
 
 class MainController extends BaseController
@@ -41,13 +37,13 @@ class MainController extends BaseController
         validate([
             'username' => 'require|length:4,20',
             'password' => 'require|length:12,20',
-            'mode' => 'require|number',
         ])->check($this->post);
         $locker = Lock::create();
         $ip = get_client_ip();
         // TODO: GET ISP
         if (!$locker->check('ip:' . $ip)) {
             $locker->lock('ip:' . $ip);
+
             // Logger IP登录锁定
             return [
                 'error' => 2,
@@ -55,19 +51,20 @@ class MainController extends BaseController
             ];
         }
         $user = $this->post['username'];
-        $notAdmin = $this->post['mode'] !== 0;
-        $data = $notAdmin ? $this->fetchUserData($user) : AdminRedis::create()->get($user);
+        $data = AdminRedis::create()->get($user);
         if (empty($data)) {
             $locker->inc('ip:' . $ip);
+
             // Logger 用户不存在或冻结
             return [
                 'error' => 1,
                 'msg' => '当前用户不存在或已被冻结'
             ];
         }
-        $userKey = $notAdmin ? $this->fetchUserKey() : 'admin';
+        $userKey = 'admin:';
         if (!$locker->check($userKey . $user)) {
             $locker->lock($userKey . $user);
+
             // Logger 用户登录失败上限
             return [
                 'error' => 2,
@@ -76,6 +73,7 @@ class MainController extends BaseController
         }
         if (!Hash::check($this->post['password'], $data['password'])) {
             $locker->inc($userKey . $user);
+
             // Logger 用户登录密码不正确
             return [
                 'error' => 1,
@@ -84,43 +82,10 @@ class MainController extends BaseController
         }
         $locker->remove('ip:' . $ip);
         $locker->remove($userKey . $user);
+
         // Logger ISP
         return $this->create('system', [
             'user' => $data['username'],
-        ]);
-    }
-
-    /**
-     * 其他模式下用户返回数据
-     * @param string $user
-     * @return array
-     */
-    protected function fetchUserData(string $user): array
-    {
-        return [];
-    }
-
-    /**
-     * 其他模式下用户锁定
-     * @return string
-     */
-    protected function fetchUserKey(): string
-    {
-        return 'user:';
-    }
-
-    /**
-     * 认证返回，自定义标识变量
-     * @param array $data 用户数据
-     * @param int $mode 登录模式代码
-     * @return array
-     * @throws Exception
-     */
-    protected function loginAfter(array $data, int $mode): array
-    {
-        return $this->create('system', [
-            'user' => $data['username'],
-            'mode' => $mode
         ]);
     }
 
@@ -140,12 +105,7 @@ class MainController extends BaseController
      */
     protected function authHook(array $symbol): array
     {
-        if ($symbol['mode'] !== 0) {
-            $data = $this->fetchUserData($symbol['user']);
-        } else {
-            $data = AdminRedis::create()->get($symbol['user']);
-        }
-
+        $data = AdminRedis::create()->get($symbol['user']);
         if (empty($data)) {
             return [
                 'error' => 1,
@@ -177,8 +137,7 @@ class MainController extends BaseController
     {
         $router = ResourceRedis::create()->get();
         $user = Context::get('auth')->user;
-        $notAdmin = Context::get('auth')->mode !== 0;
-        $data = $notAdmin ? $this->fetchUserData($user) : AdminRedis::create()->get($user);
+        $data = AdminRedis::create()->get($user);
         $resourceData = [
             ...RoleRedis::create()->get($data['role'], 'resource'),
             ...$data['resource']
@@ -202,13 +161,9 @@ class MainController extends BaseController
     public function information(): array
     {
         $user = Context::get('auth')->user;
-        if (Context::get('auth')->mode !== 0) {
-            $data = $this->fetchInformation($user);
-        } else {
-            $data = Db::name('admin')
-                ->where('username', '=', $user)
-                ->find();
-        }
+        $data = Db::name('admin')
+            ->where('username', '=', $user)
+            ->find();
 
         return [
             'error' => 0,
@@ -220,16 +175,6 @@ class MainController extends BaseController
                 'avatar' => $data['avatar']
             ]
         ];
-    }
-
-    /**
-     * 其他模式下用户数据信息
-     * @param string $user
-     * @return array
-     */
-    protected function fetchInformation(string $user): array
-    {
-        return [];
     }
 
     /**
@@ -252,15 +197,9 @@ class MainController extends BaseController
         ])->check($this->post);
 
         $user = Context::get('auth')->user;
-        $notAdmin = Context::get('auth')->mode !== 0;
-
-        if ($notAdmin) {
-            $data = $this->fetchInformation($user);
-        } else {
-            $data = Db::name('admin')
-                ->where('username', '=', $user)
-                ->find();
-        }
+        $data = Db::name('admin')
+            ->where('username', '=', $user)
+            ->find();
 
         if (!empty($this->post['old_password'])) {
             if (!Hash::check($this->post['old_password'], $data['password'])) {
@@ -273,73 +212,13 @@ class MainController extends BaseController
         }
 
         unset($this->post['old_password'], $this->post['new_password']);
-
-        if ($notAdmin) {
-            $this->setUpdate($user);
-        } else {
-            Db::name('admin')
-                ->where('username', '=', $user)
-                ->update($this->post);
-            AdminRedis::create()->clear();
-        }
-
+        Db::name('admin')
+            ->where('username', '=', $user)
+            ->update($this->post);
+        AdminRedis::create()->clear();
         return [
             'error' => 0,
             'msg' => 'ok'
-        ];
-    }
-
-    /**
-     * 其他模式用户更新
-     * @param string $user
-     */
-    protected function setUpdate(string $user): void
-    {
-        // TODO: 自定义
-    }
-
-    /**
-     * 文件上传
-     * @param string $name
-     * @return array
-     * @throws Exception
-     */
-    public function uploads($name = 'image'): array
-    {
-        $saveName = null;
-        switch (config('filesystem.object_store')) {
-            case 'aliyun':
-                $saveName = Oss::put($name);
-                break;
-            case 'huaweicloud':
-                $saveName = Obs::put($name);
-                break;
-            case 'qcloud':
-                $saveName = Cos::put($name);
-                break;
-            default:
-                $file = Request::file($name);
-                $saveName = date('Ymd') . '/' .
-                    uuid()->toString() . '.' .
-                    $file->getOriginalExtension();
-                Filesystem::disk('public')->putFileAs(
-                    date('Ymd'),
-                    $file,
-                    uuid()->toString() . '.' . $file->getOriginalExtension()
-                );
-        }
-        if (empty($saveName)) {
-            return [
-                'error' => 1,
-                'msg' => '上传尚未完成'
-            ];
-        }
-
-        return [
-            'error' => 0,
-            'data' => [
-                'save_name' => $saveName,
-            ]
         ];
     }
 
@@ -350,27 +229,9 @@ class MainController extends BaseController
      */
     public function presigned(): array
     {
-        switch (config('filesystem.object_store')) {
-            case 'aliyun':
-                return Oss::generatePostPresigned($this->presignedConditions());
-            case 'huaweicloud':
-                return Obs::generatePostPresigned($this->presignedConditions());
-            case 'qcloud':
-                return Cos::generatePostPresigned($this->presignedConditions());
-        }
-//        return Cos::generatePostPresigned([
-//            ['content-length-range', 0, 104857600]
-//        ]);
-        return [];
-    }
-
-    /**
-     * 设定对象存储 Policy
-     * @return array
-     */
-    protected function presignedConditions(): array
-    {
-        return [];
+        return Cos::generatePostPresigned([
+            ['content-length-range', 0, 104857600]
+        ]);
     }
 
     /**
@@ -382,18 +243,7 @@ class MainController extends BaseController
         validate([
             'keys' => 'require|array'
         ])->check($this->post);
-
-        switch (config('filesystem.object_store')) {
-            case 'aliyun':
-                Oss::delete($this->post['keys']);
-                break;
-            case 'huaweicloud':
-                Obs::delete($this->post['keys']);
-                break;
-            case 'qcloud':
-                Cos::delete($this->post['keys']);
-                break;
-        }
+        Cos::delete($this->post['keys']);
         return [
             'error' => 0,
             'msg' => 'ok'
