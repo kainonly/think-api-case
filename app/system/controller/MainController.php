@@ -171,7 +171,7 @@ class MainController extends BaseController
                 'username' => $data['username'],
                 'email' => $data['email'],
                 'phone' => $data['phone'],
-                'realname' => $data['realname'],
+                'call' => $data['call'],
                 'avatar' => $data['avatar']
             ]
         ];
@@ -205,7 +205,7 @@ class MainController extends BaseController
             if (!Hash::check($this->post['old_password'], $data['password'])) {
                 return [
                     'error' => 2,
-                    'msg' => 'password verification failed'
+                    'msg' => '用户密码验证失败'
                 ];
             }
             $this->post['password'] = Hash::create($this->post['new_password']);
