@@ -56,20 +56,20 @@ class SystemRbacVerify
         if ($activePolicy === null) {
             return json([
                 'error' => 1,
-                'msg' => 'rbac invalid, policy is empty'
+                'msg' => '权限验证失败，策略设置不存在'
             ]);
         }
         $lists = AclRedis::create()->get($controller, (int)$activePolicy);
         if (empty($lists)) {
             return json([
                 'error' => 1,
-                'msg' => 'rbac invalid, acl is empty'
+                'msg' => '权限验证失败，访问控制不存在'
             ]);
         }
         if (!in_array($action, $lists, true)) {
             return json([
                 'error' => 1,
-                'msg' => 'rbac invalid, access denied'
+                'msg' => '权限验证拒绝，当前用户尚未授权'
             ]);
         }
         return $next($request);

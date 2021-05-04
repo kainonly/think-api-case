@@ -23,7 +23,7 @@ class SystemAuthVerify extends AuthVerify
         if (empty($data)) {
             $this->hookResult = [
                 'error' => 1,
-                'msg' => 'freeze'
+                'msg' => '当前用户被冻结或已注销'
             ];
             return false;
         }
