@@ -5,7 +5,7 @@ namespace app\system\controller;
 
 use think\bit\common\ListsModel;
 
-class LoginLog extends BaseController
+class LoginLogController extends BaseController
 {
     use ListsModel;
 

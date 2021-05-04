@@ -3,7 +3,7 @@ declare (strict_types=1);
 
 namespace app\system\middleware;
 
-use app\common\job\Logger;
+use app\common\jobs\Logger;
 use Closure;
 use think\facade\Queue;
 use think\Request;
