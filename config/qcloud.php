@@ -6,5 +6,10 @@ return [
     'cos' => [
         'bucket' => env('qcloud.cos_bucket'),
         'region' => env('qcloud.cos_region')
+    ],
+    'api' => [
+        'url' => env('qcloud.api'),
+        'appkey' => env('qcloud.api_appkey'),
+        'appsecret' => env('qcloud.api_appsecret')
     ]
 ];

@@ -1,4 +1,5 @@
 {
+  "name": "kain/think-skeleton",
   "description": "辅助 ThinkPHP(6) 框架的工具集合使用案例，构建简洁统一的中后台接口方案",
   "type": "project",
   "require": {

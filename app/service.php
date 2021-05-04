@@ -8,5 +8,6 @@ return [
     think\redis\RedisService::class,
     think\aliyun\extra\OssService::class,
     think\huaweicloud\extra\ObsService::class,
-    think\qcloud\extra\CosService::class
+    think\qcloud\extra\CosService::class,
+    think\qcloud\extra\ApiGatewayService::class
 ];
