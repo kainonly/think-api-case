@@ -38,7 +38,7 @@ class RoleController extends BaseController
         $this->post['name'] = json_encode($this->post['name'], JSON_UNESCAPED_UNICODE);
         $this->resource = $this->post['resource'];
         unset($this->post['resource']);
-        $this->post['permission'] = implode(',', $this->post['permission']);
+        $this->post['permission'] = implode(',', $this->post['permission'] ?? []);
         return true;
     }
 
@@ -65,7 +65,7 @@ class RoleController extends BaseController
             $this->post['name'] = json_encode($this->post['name'], JSON_UNESCAPED_UNICODE);
             $this->resource = $this->post['resource'];
             unset($this->post['resource']);
-            $this->post['permission'] = implode(',', $this->post['permission']);
+            $this->post['permission'] = implode(',', $this->post['permission'] ?? []);
         }
         return true;
     }
