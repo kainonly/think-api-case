@@ -2,9 +2,9 @@
 
 辅助 ThinkPHP(6) 框架的工具集合使用案例，构建简洁统一的中后台接口方案
 
-> 前端对应开源项目 https://github.com/kainonly/ngx-bit
+## 快速开始
 
-首选需要创建一个 thinkphp 官方的骨架项目
+首先需要创建一个 thinkphp 官方的骨架项目
 
 ```shell script
 composer create-project topthink/think tp
